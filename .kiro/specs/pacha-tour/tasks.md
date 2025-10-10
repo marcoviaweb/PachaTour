@@ -31,7 +31,8 @@
     - Configurar hot reload para desarrollo eficiente
     - _Requerimientos: Base del proyecto_
 
-  - [-] 1.4 Implementar estructura por features
+  - [ ] 1.4 Implementar estructura por features
+
 
     - Crear directorios en app/Features/ para cada módulo
     - Configurar autoloading en composer.json para features
