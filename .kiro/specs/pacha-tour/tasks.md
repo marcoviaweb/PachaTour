@@ -4,7 +4,8 @@
 
 
 
-  - [-] 1.1 Inicializar proyecto Laravel
+  - [x] 1.1 Inicializar proyecto Laravel
+
 
     - Ejecutar `composer create-project laravel/laravel pacha-tour`
     - Configurar archivo .env con variables de entorno básicas
@@ -12,21 +13,26 @@
     - Crear repositorio Git e inicializar control de versiones
     - _Requerimientos: Base del proyecto_
 
-  - [ ] 1.2 Configurar base de datos PostgreSQL
+  - [x] 1.2 Configurar base de datos PostgreSQL
+
+
     - Instalar y configurar PostgreSQL localmente
     - Crear base de datos `pacha_tour_db`
     - Configurar conexión en .env (DB_CONNECTION, DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD)
     - Probar conexión ejecutando `php artisan migrate:status`
     - _Requerimientos: Base del proyecto_
 
-  - [ ] 1.3 Configurar Vue.js con Vite
+
+  - [x] 1.3 Configurar Vue.js con Vite
+
     - Instalar Laravel Breeze con Vue: `php artisan breeze:install vue`
     - Configurar Vite para desarrollo: `npm install && npm run dev`
     - Verificar que la aplicación carga correctamente en el navegador
     - Configurar hot reload para desarrollo eficiente
     - _Requerimientos: Base del proyecto_
 
-  - [ ] 1.4 Implementar estructura por features
+  - [-] 1.4 Implementar estructura por features
+
     - Crear directorios en app/Features/ para cada módulo
     - Configurar autoloading en composer.json para features
     - Crear estructura base de controladores, modelos y servicios

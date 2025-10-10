@@ -24,6 +24,14 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
+            "App\\Features\\Departments\\": "app/Features/Departments/",
+            "App\\Features\\Attractions\\": "app/Features/Attractions/",
+            "App\\Features\\Tours\\": "app/Features/Tours/",
+            "App\\Features\\Users\\": "app/Features/Users/",
+            "App\\Features\\Payments\\": "app/Features/Payments/",
+            "App\\Features\\Reviews\\": "app/Features/Reviews/",
+            "App\\Features\\Admin\\": "app/Features/Admin/",
+            "App\\Features\\Localization\\": "app/Features/Localization/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }
