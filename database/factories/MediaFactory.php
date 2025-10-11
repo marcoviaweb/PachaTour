@@ -61,7 +61,7 @@ class MediaFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'type' => 'image',
             'mime_type' => 'image/jpeg',
-            'path' => 'attractions/1/images/' . $this->faker->uuid() . '.jpg',
+            'path' => 'images/placeholder.jpg', // Usar imagen placeholder real
             'size' => $this->faker->numberBetween(500000, 5000000),
         ]);
     }

@@ -22,13 +22,12 @@ class DepartmentApiController extends Controller
                 $query->search($request->search);
             }
 
-            // Include attractions count
-            $query->withCount('activeAttractions');
+            // Load relationships and counts
+            $query->with(['media'])->withCount('activeAttractions');
 
-            // Load relationships
-            $query->with(['media']);
+            $departments = $query->get();
 
-            $departments = $query->get()->map(function ($department) {
+            $departments = $departments->map(function ($department) {
                 return [
                     'id' => $department->id,
                     'name' => $department->name,
@@ -36,7 +35,7 @@ class DepartmentApiController extends Controller
                     'capital' => $department->capital,
                     'short_description' => $department->short_description,
                     'image_url' => $department->image_url,
-                    'attractions_count' => $department->active_attractions_count,
+                    'attractions_count' => $department->active_attractions_count ?? 0,
                     'coordinates' => $department->getCoordinates(),
                 ];
             });
@@ -66,18 +65,7 @@ class DepartmentApiController extends Controller
         try {
             $department = Department::where('slug', $slug)
                 ->active()
-                ->with([
-                    'media',
-                    'activeAttractions' => function ($query) {
-                        $query->with('media')->orderBy('name');
-                    },
-                    'reviews' => function ($query) {
-                        $query->where('status', 'approved')
-                            ->with('user:id,name')
-                            ->latest()
-                            ->limit(10);
-                    }
-                ])
+                ->with(['media'])
                 ->first();
 
             if (!$department) {
@@ -87,6 +75,9 @@ class DepartmentApiController extends Controller
                 ], 404);
             }
 
+            // Load attractions count
+            $department->loadCount('activeAttractions');
+
             $departmentData = [
                 'id' => $department->id,
                 'name' => $department->name,
@@ -94,37 +85,14 @@ class DepartmentApiController extends Controller
                 'capital' => $department->capital,
                 'description' => $department->description,
                 'short_description' => $department->short_description,
-                'image_url' => $department->image_url,
-                'gallery' => $department->gallery,
                 'population' => $department->population,
                 'area_km2' => $department->area_km2,
                 'climate' => $department->climate,
                 'languages' => $department->languages,
-                'coordinates' => $department->getCoordinates(),
-                'attractions_count' => $department->attractions_count,
+                'image_url' => $department->image_url,
+                'attractions_count' => $department->active_attractions_count ?? 0,
                 'average_rating' => round($department->average_rating, 1),
-                'attractions' => $department->activeAttractions->map(function ($attraction) {
-                    return [
-                        'id' => $attraction->id,
-                        'name' => $attraction->name,
-                        'slug' => $attraction->slug,
-                        'short_description' => $attraction->short_description,
-                        'image_url' => $attraction->image_url,
-                        'tourism_type' => $attraction->tourism_type,
-                        'average_rating' => round($attraction->average_rating, 1),
-                        'coordinates' => $attraction->getCoordinates(),
-                    ];
-                }),
-                'reviews' => $department->reviews->map(function ($review) {
-                    return [
-                        'id' => $review->id,
-                        'rating' => $review->rating,
-                        'title' => $review->title,
-                        'comment' => $review->comment,
-                        'user_name' => $review->user->name,
-                        'created_at' => $review->created_at->format('Y-m-d'),
-                    ];
-                }),
+                'coordinates' => $department->getCoordinates(),
             ];
 
             return response()->json([

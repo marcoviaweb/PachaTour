@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Features\Admin\Controllers\AdminController;
+use App\Features\Admin\Controllers\ReportController;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,40 +31,137 @@ Route::get('/test', function () {
     ]);
 });
 
-// Ruta principal con HTML simple
-Route::get('/', function () {
-    return '<!DOCTYPE html>
-<html>
-<head>
-    <title>Pacha Tour</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
-        .container { background: white; padding: 30px; border-radius: 10px; display: inline-block; }
-        h1 { color: #333; }
-        .links { margin-top: 20px; }
-        .links a { margin: 0 10px; padding: 10px 20px; background: #007cba; color: white; text-decoration: none; border-radius: 5px; }
-        .status { background: #e8f5e8; color: #2d5a2d; padding: 10px; border-radius: 5px; margin: 10px 0; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🏔️ Pacha Tour</h1>
-        <p>Plataforma de Turismo de Bolivia</p>
-        <div class="status">
-            <strong>✅ Laravel funcionando</strong><br>
-            <strong>✅ PostgreSQL conectado</strong><br>
-            <strong>✅ Migraciones ejecutadas</strong>
-        </div>
-        <div class="links">
-            <a href="/test">Test API</a>
-            <a href="/test-db">Test BD</a>
-            <a href="/test-database.php">Diagnóstico BD</a>
-            <a href="/api/departments">Departamentos</a>
-        </div>
-    </div>
-</body>
-</html>';
+// Test departments API
+Route::get('/test-departments', function () {
+    try {
+        $departments = \App\Models\Department::all();
+        return response()->json([
+            'status' => 'success',
+            'count' => $departments->count(),
+            'departments' => $departments->take(3)
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ], 500);
+    }
 });
+
+// Test attractions API
+Route::get('/test-attractions', function () {
+    try {
+        $attractions = \App\Models\Attraction::all();
+        $featured = \App\Models\Attraction::where('is_featured', true)->count();
+        return response()->json([
+            'status' => 'success',
+            'total_count' => $attractions->count(),
+            'featured_count' => $featured,
+            'sample_attractions' => $attractions->take(3)
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ], 500);
+    }
+});
+
+// Ruta principal usando Inertia.js y Vue.js
+// Authentication routes (web views)
+Route::get('/login', function () {
+    return \Inertia\Inertia::render('Auth/Login');
+})->name('login')->middleware('guest');
+
+Route::get('/register', function () {
+    return \Inertia\Inertia::render('Auth/Register');
+})->name('register')->middleware('guest');
+
+Route::get('/', function () {
+    return \Inertia\Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+    ]);
+});
+
+// Search page route
+Route::get('/buscar', function () {
+    return \Inertia\Inertia::render('Search');
+})->name('search');
+
+// Department routes
+Route::get('/departamentos', function () {
+    return \Inertia\Inertia::render('Departments/Index');
+})->name('departments.index');
+
+Route::get('/departamentos/{slug}', function ($slug) {
+    return \Inertia\Inertia::render('Departments/Show', [
+        'departmentSlug' => $slug
+    ]);
+})->name('departments.show');
+
+// Attraction routes
+Route::get('/atractivos', function () {
+    return \Inertia\Inertia::render('Attractions/Index');
+})->name('attractions.index');
+
+Route::get('/atractivos/{slug}', function ($slug) {
+    try {
+        $attraction = \App\Models\Attraction::where('slug', $slug)
+            ->with([
+                'department',
+                'media' => function ($query) {
+                    $query->orderBy('sort_order')->orderBy('created_at');
+                },
+                'tours.schedules',
+                'reviews' => function ($query) {
+                    $query->with('user:id,name')
+                        ->where('status', 'approved')
+                        ->latest()
+                        ->limit(10);
+                }
+            ])
+            ->firstOrFail();
+
+        // Increment visit count
+        $attraction->increment('visits_count');
+
+        return \Inertia\Inertia::render('Attractions/Show', [
+            'attraction' => $attraction
+        ]);
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        abort(404, 'Atractivo no encontrado');
+    }
+})->name('attractions.show');
+
+// User Dashboard route (requires authentication)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/mis-viajes', function () {
+        return \Inertia\Inertia::render('User/Dashboard');
+    })->name('user.dashboard');
+    
+    Route::get('/perfil', function () {
+        return \Inertia\Inertia::render('User/Profile');
+    })->name('user.profile');
+    
+    // Planning route using web authentication
+    Route::post('/planificar-visita', function (\Illuminate\Http\Request $request) {
+        $controller = new \App\Features\Tours\Controllers\BookingController(
+            new \App\Features\Tours\Services\BookingService()
+        );
+        
+        return $controller->storePlanning($request);
+    })->name('planning.store');
+});
+
+// Temporary test route for profile (without authentication)
+Route::get('/test-perfil', function () {
+    return \Inertia\Inertia::render('User/Profile');
+})->name('test.profile');
 
 // Ruta para probar base de datos directamente
 Route::get('/test-db', function () {
@@ -169,6 +269,39 @@ Route::get('/test-models', function () {
             'message' => $e->getMessage(),
             'file' => $e->getFile(),
             'line' => $e->getLine()
+        ], 500);
+    }
+});
+
+// Admin routes
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/overview', [AdminController::class, 'overview'])->name('overview');
+    
+    // Report routes
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/bookings', [ReportController::class, 'bookings'])->name('bookings');
+        Route::get('/revenue', [ReportController::class, 'revenue'])->name('revenue');
+        Route::get('/users', [ReportController::class, 'users'])->name('users');
+        Route::get('/attractions', [ReportController::class, 'attractions'])->name('attractions');
+        Route::get('/commissions', [ReportController::class, 'commissions'])->name('commissions');
+        Route::get('/export', [ReportController::class, 'export'])->name('export');
+    });
+});
+
+require __DIR__.'/auth.php';
+
+// Debug route for admin dashboard
+Route::get('/debug-admin', function () {
+    try {
+        $controller = new \App\Features\Admin\Controllers\AdminController();
+        return $controller->dashboard();
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
         ], 500);
     }
 });

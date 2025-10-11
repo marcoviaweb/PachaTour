@@ -25,6 +25,48 @@ Route::get('/health', function () {
     ]);
 });
 
+// Temporary test routes for profile (without authentication)
+Route::prefix('test')->group(function () {
+    Route::get('/user/profile', function () {
+        return response()->json([
+            'user' => [
+                'id' => 1,
+                'name' => 'Usuario de Prueba',
+                'last_name' => 'Apellido Test',
+                'email' => 'test@example.com',
+                'phone' => '+591 70123456',
+                'birth_date' => '1990-01-01',
+                'gender' => 'male',
+                'nationality' => 'Boliviana',
+                'country' => 'Bolivia',
+                'city' => 'La Paz',
+                'preferred_language' => 'es',
+                'bio' => 'Esta es una biografía de prueba para el usuario de test.',
+                'newsletter_subscription' => true,
+                'marketing_emails' => false,
+                'created_at' => '2024-01-01T00:00:00.000000Z'
+            ]
+        ]);
+    });
+    
+    Route::put('/user/profile', function () {
+        return response()->json([
+            'message' => 'Perfil actualizado exitosamente (modo test)',
+            'user' => [
+                'id' => 1,
+                'name' => 'Usuario Actualizado',
+                'email' => 'test@example.com'
+            ]
+        ]);
+    });
+    
+    Route::post('/user/change-password', function () {
+        return response()->json([
+            'message' => 'Contraseña cambiada exitosamente (modo test)'
+        ]);
+    });
+});
+
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes
@@ -203,6 +245,7 @@ Route::middleware(['auth:sanctum', 'auth.api'])->group(function () {
     Route::prefix('bookings')->group(function () {
         Route::get('/', [BookingController::class, 'index']);
         Route::post('/', [BookingController::class, 'store']);
+        Route::post('/plan', [BookingController::class, 'storePlanning']);
         Route::get('/summary', [BookingController::class, 'summary']);
         Route::get('/{booking}', [BookingController::class, 'show']);
         Route::put('/{booking}', [BookingController::class, 'update']);
@@ -298,5 +341,57 @@ Route::middleware(['auth:sanctum', 'auth.api', 'role:admin'])->group(function ()
         Route::get('/pending', [CommissionController::class, 'getPendingCommissions']);
         Route::post('/mark-paid', [CommissionController::class, 'markAsPaid']);
         Route::get('/rates', [CommissionController::class, 'getCommissionRates']);
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| User Management Routes (Admin)
+|--------------------------------------------------------------------------
+*/
+
+use App\Features\Admin\Controllers\UserController;
+
+// Admin user management routes
+Route::middleware(['auth:sanctum', 'auth.api', 'role:admin'])->group(function () {
+    Route::prefix('admin/users')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::get('/statistics', [UserController::class, 'getStatistics']);
+        Route::get('/{user}', [UserController::class, 'show']);
+        Route::put('/{user}', [UserController::class, 'update']);
+        Route::patch('/{user}/activate', [UserController::class, 'activate']);
+        Route::patch('/{user}/deactivate', [UserController::class, 'deactivate']);
+        Route::post('/{user}/reset-password', [UserController::class, 'resetPassword']);
+        Route::post('/{user}/send-password-reset', [UserController::class, 'sendPasswordResetLink']);
+        Route::get('/{user}/activity', [UserController::class, 'getActivityLogs']);
+    });
+});
+/*
+|
+--------------------------------------------------------------------------
+| User Dashboard Routes
+|--------------------------------------------------------------------------
+*/
+
+use App\Features\Users\Controllers\UserDashboardController;
+
+// User dashboard routes (Authenticated users)
+Route::middleware(['auth:sanctum', 'auth.api'])->group(function () {
+    Route::prefix('user')->name('user.')->group(function () {
+        // Dashboard stats and data
+        Route::get('/dashboard/stats', [UserDashboardController::class, 'dashboardStats'])->name('dashboard.stats');
+        Route::get('/bookings/upcoming', [UserDashboardController::class, 'upcomingBookings'])->name('bookings.upcoming');
+        Route::get('/bookings/history', [UserDashboardController::class, 'bookingHistory'])->name('bookings.history');
+        Route::get('/reviews', [UserDashboardController::class, 'userReviews'])->name('reviews');
+        Route::get('/favorites', [UserDashboardController::class, 'userFavorites'])->name('favorites');
+        
+        // Favorites management
+        Route::post('/favorites', [UserDashboardController::class, 'addFavorite'])->name('favorites.add');
+        Route::delete('/favorites/{favorite}', [UserDashboardController::class, 'removeFavorite'])->name('favorites.remove');
+        
+        // Profile management
+        Route::get('/profile', [UserDashboardController::class, 'profile'])->name('profile');
+        Route::put('/profile', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
+        Route::post('/change-password', [UserDashboardController::class, 'changePassword'])->name('password.change');
     });
 });

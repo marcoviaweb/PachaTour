@@ -38,6 +38,7 @@ class User extends Authenticatable
         'last_login_at',
         'last_login_ip',
         'is_active',
+        'password_changed_at',
         'social_provider',
         'social_id',
     ];
@@ -63,6 +64,7 @@ class User extends Authenticatable
         'interests' => 'array',
         'birth_date' => 'date',
         'last_login_at' => 'datetime',
+        'password_changed_at' => 'datetime',
         'newsletter_subscription' => 'boolean',
         'marketing_emails' => 'boolean',
         'is_active' => 'boolean',
@@ -115,6 +117,14 @@ class User extends Authenticatable
     public function moderatedReviews()
     {
         return $this->hasMany(Review::class, 'moderated_by');
+    }
+
+    /**
+     * Actividades del usuario
+     */
+    public function activities()
+    {
+        return $this->hasMany(UserActivity::class);
     }
 
     // Scopes

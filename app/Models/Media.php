@@ -168,7 +168,13 @@ class Media extends Model
             return $this->url;
         }
         
-        return Storage::disk($this->disk)->url($this->path);
+        // Verificar si el archivo existe antes de generar la URL
+        if ($this->path && Storage::disk($this->disk ?? 'public')->exists($this->path)) {
+            return Storage::disk($this->disk ?? 'public')->url($this->path);
+        }
+        
+        // Fallback a imagen placeholder
+        return asset('images/placeholder.jpg');
     }
 
     /**

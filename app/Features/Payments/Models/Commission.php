@@ -12,6 +12,14 @@ class Commission extends Model
 {
     use HasFactory;
 
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return \Database\Factories\CommissionFactory::new();
+    }
+
     protected $fillable = [
         'booking_id',
         'tour_id',

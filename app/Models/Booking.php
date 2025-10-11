@@ -29,6 +29,7 @@ class Booking extends Model
         'participant_details',
         'special_requests',
         'notes',
+        'planning_data',
         'contact_name',
         'contact_email',
         'contact_phone',
@@ -48,6 +49,7 @@ class Booking extends Model
         'commission_amount' => 'decimal:2',
         'participant_details' => 'array',
         'special_requests' => 'array',
+        'planning_data' => 'array',
         'refund_amount' => 'decimal:2',
         'confirmed_at' => 'datetime',
         'cancelled_at' => 'datetime',
@@ -55,6 +57,7 @@ class Booking extends Model
     ];
 
     // Constantes para estados de reserva
+    const STATUS_PLANNED = 'planned';
     const STATUS_PENDING = 'pending';
     const STATUS_CONFIRMED = 'confirmed';
     const STATUS_PAID = 'paid';
@@ -64,6 +67,7 @@ class Booking extends Model
     const STATUS_NO_SHOW = 'no_show';
 
     const STATUSES = [
+        self::STATUS_PLANNED => 'Planificada',
         self::STATUS_PENDING => 'Pendiente',
         self::STATUS_CONFIRMED => 'Confirmada',
         self::STATUS_PAID => 'Pagada',

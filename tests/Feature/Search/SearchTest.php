@@ -131,18 +131,26 @@ class SearchTest extends TestCase
     /** @test */
     public function can_get_search_suggestions()
     {
-        $response = $this->getJson('/api/search/suggestions?term=sal');
+        $response = $this->getJson('/api/search/suggestions?q=sal');
 
         $response->assertStatus(200)
                 ->assertJsonStructure([
                     'success',
-                    'data',
+                    'data' => [
+                        '*' => [
+                            'id',
+                            'name',
+                            'type',
+                            'department'
+                        ]
+                    ],
                     'message'
                 ])
                 ->assertJsonPath('success', true);
         
         $suggestions = $response->json('data');
-        $this->assertContains('Salar de Uyuni', $suggestions);
+        $suggestionNames = array_column($suggestions, 'name');
+        $this->assertContains('Salar de Uyuni', $suggestionNames);
     }
 
     /** @test */

@@ -1,0 +1,65 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="hotSpringGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFE0B2;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#FF9800;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#E65100;stop-opacity:0.9" />
+    </radialGradient>
+    <linearGradient id="steamGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0.1" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Sky -->
+  <rect width="400" height="300" fill="#FFF3E0"/>
+  
+  <!-- Mountains -->
+  <path d="M0,150 L100,80 L200,120 L300,70 L400,100 L400,300 L0,300 Z" fill="#8D6E63" opacity="0.7"/>
+  
+  <!-- Hot spring pools -->
+  <ellipse cx="150" cy="200" rx="50" ry="25" fill="url(#hotSpringGrad)"/>
+  <ellipse cx="250" cy="220" rx="40" ry="20" fill="url(#hotSpringGrad)"/>
+  <ellipse cx="320" cy="190" rx="30" ry="15" fill="url(#hotSpringGrad)"/>
+  
+  <!-- Steam rising -->
+  <ellipse cx="150" cy="180" rx="8" ry="20" fill="url(#steamGrad)"/>
+  <ellipse cx="160" cy="175" rx="6" ry="15" fill="url(#steamGrad)"/>
+  <ellipse cx="140" cy="175" rx="5" ry="18" fill="url(#steamGrad)"/>
+  
+  <ellipse cx="250" cy="200" rx="6" ry="15" fill="url(#steamGrad)"/>
+  <ellipse cx="260" cy="195" rx="4" ry="12" fill="url(#steamGrad)"/>
+  
+  <ellipse cx="320" cy="175" rx="4" ry="10" fill="url(#steamGrad)"/>
+  <ellipse cx="325" cy="170" rx="3" ry="8" fill="url(#steamGrad)"/>
+  
+  <!-- Rock formations around pools -->
+  <ellipse cx="100" cy="220" rx="15" ry="10" fill="#795548"/>
+  <ellipse cx="200" cy="240" rx="20" ry="12" fill="#6D4C41"/>
+  <ellipse cx="300" cy="210" rx="12" ry="8" fill="#795548"/>
+  <ellipse cx="370" cy="200" rx="10" ry="6" fill="#8D6E63"/>
+  
+  <!-- Mineral deposits -->
+  <circle cx="130" cy="210" r="3" fill="#FFD54F" opacity="0.8"/>
+  <circle cx="170" cy="205" r="2" fill="#FFD54F" opacity="0.8"/>
+  <circle cx="240" cy="230" r="2.5" fill="#FFD54F" opacity="0.8"/>
+  <circle cx="260" cy="225" r="2" fill="#FFD54F" opacity="0.8"/>
+  
+  <!-- Sun -->
+  <circle cx="350" cy="70" r="20" fill="#FFD54F"/>
+  <path d="M350,35 L350,45 M350,95 L350,105 M315,70 L325,70 M375,70 L385,70 M325,45 L332,52 M368,88 L375,95 M325,95 L332,88 M368,52 L375,45" stroke="#FFD54F" stroke-width="2"/>
+  
+  <!-- Vegetation adapted to heat -->
+  <circle cx="80" cy="180" r="12" fill="#8BC34A" opacity="0.7"/>
+  <rect x="76" y="185" width="8" height="10" fill="#8D6E63"/>
+  
+  <circle cx="380" cy="160" r="10" fill="#8BC34A" opacity="0.7"/>
+  <rect x="377" y="165" width="6" height="8" fill="#8D6E63"/>
+  
+  <!-- Pathway -->
+  <path d="M50,250 Q150,240 250,245 T380,250" stroke="#A1887F" stroke-width="4" fill="none" opacity="0.6"/>
+  
+  <!-- Title -->
+  <text x="200" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#E65100">Termas del Sol</text>
+  <text x="200" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#FF9800">Aguas Termales</text>
+</svg>

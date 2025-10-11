@@ -38,8 +38,8 @@ class SearchController extends Controller
      */
     public function suggestions(Request $request): JsonResponse
     {
-        $term = $request->get('term', '');
-        $limit = $request->get('limit', 10);
+        $term = $request->get('q', ''); // SearchBar component sends 'q' parameter
+        $limit = $request->get('limit', 8);
 
         if (strlen($term) < 2) {
             return response()->json([

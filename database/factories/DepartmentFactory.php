@@ -51,9 +51,9 @@ class DepartmentFactory extends Factory
                 'Español', 'Quechua', 'Aymara', 'Guaraní'
             ], $this->faker->numberBetween(1, 3)),
             'gallery' => [
-                $this->faker->word() . '.jpg',
-                $this->faker->word() . '.jpg',
-                $this->faker->word() . '.jpg'
+                'images/placeholder.jpg',
+                'images/placeholder.jpg',
+                'images/placeholder.jpg'
             ],
             'is_active' => true,
             'sort_order' => $this->faker->numberBetween(1, 9),

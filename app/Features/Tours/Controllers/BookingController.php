@@ -49,6 +49,63 @@ class BookingController extends Controller
     }
     
     /**
+     * Store a visit planning (simplified booking)
+     */
+    public function storePlanning(Request $request): JsonResponse
+    {
+        $request->validate([
+            'attraction_id' => 'required|exists:attractions,id',
+            'visit_date' => 'required|date|after:today',
+            'visitors_count' => 'required|integer|min:1|max:20',
+            'contact_name' => 'required|string|max:100',
+            'contact_email' => 'required|email|max:255',
+            'contact_phone' => 'nullable|string|max:20',
+            'notes' => 'nullable|string|max:1000',
+            'estimated_total' => 'nullable|numeric|min:0',
+        ]);
+
+        try {
+            // Create a simplified booking for visit planning
+            // Use existing fields and status to avoid migration issues
+            $booking = Booking::create([
+                'user_id' => Auth::id(),
+                'tour_schedule_id' => null, // No specific tour schedule for planning
+                'participants_count' => $request->visitors_count,
+                'total_amount' => $request->estimated_total ?? 0,
+                'currency' => 'BOB',
+                'commission_rate' => 0.00,
+                'commission_amount' => 0.00,
+                'status' => 'pending', // Use existing status
+                'payment_status' => 'pending',
+                'contact_name' => $request->contact_name,
+                'contact_email' => $request->contact_email,
+                'contact_phone' => $request->contact_phone,
+                'notes' => "PLANIFICACIÓN - Atracción ID: {$request->attraction_id}, Fecha: {$request->visit_date}. Notas: " . ($request->notes ?? ''),
+                'participant_details' => [
+                    [
+                        'name' => $request->contact_name,
+                        'type' => 'main_contact'
+                    ]
+                ],
+                'special_requests' => $request->notes ? [$request->notes] : [],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Planificación guardada exitosamente',
+                'data' => $booking
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al guardar la planificación',
+                'error' => $e->getMessage()
+            ], 422);
+        }
+    }
+
+    /**
      * Store a newly created booking
      */
     public function store(StoreBookingRequest $request): JsonResponse

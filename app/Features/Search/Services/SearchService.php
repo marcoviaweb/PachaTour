@@ -52,23 +52,63 @@ class SearchService
     {
         $suggestions = [];
 
-        // Sugerencias de nombres de atractivos
-        $attractions = Attraction::where('name', 'LIKE', '%' . $term . '%')
-            ->where('is_active', true)
-            ->limit($limit)
-            ->pluck('name')
+        // Sugerencias de atractivos
+        $attractions = Attraction::active()
+            ->search($term)
+            ->with('department')
+            ->limit(ceil($limit * 0.6)) // 60% para atractivos
+            ->get()
+            ->map(function ($attraction) {
+                return [
+                    'id' => $attraction->id,
+                    'name' => $attraction->name,
+                    'type' => 'attraction',
+                    'department' => $attraction->department->name ?? null
+                ];
+            })
             ->toArray();
 
         // Sugerencias de departamentos
         $departments = Department::where('name', 'LIKE', '%' . $term . '%')
-            ->limit($limit)
-            ->pluck('name')
+            ->limit(ceil($limit * 0.3)) // 30% para departamentos
+            ->get()
+            ->map(function ($department) {
+                return [
+                    'id' => $department->id,
+                    'name' => $department->name,
+                    'type' => 'department',
+                    'department' => null
+                ];
+            })
             ->toArray();
 
-        // Combinar y limitar sugerencias
-        $suggestions = array_merge($attractions, $departments);
+        // Sugerencias de tipos de turismo
+        $tourismTypes = [
+            'cultural' => 'Turismo Cultural',
+            'natural' => 'Turismo Natural',
+            'adventure' => 'Turismo de Aventura',
+            'historical' => 'Turismo Histórico',
+            'religious' => 'Turismo Religioso',
+            'gastronomic' => 'Turismo Gastronómico',
+            'ecological' => 'Turismo Ecológico'
+        ];
+
+        $typesSuggestions = [];
+        foreach ($tourismTypes as $key => $label) {
+            if (stripos($label, $term) !== false || stripos($key, $term) !== false) {
+                $typesSuggestions[] = [
+                    'id' => $key,
+                    'name' => $label,
+                    'type' => 'tourism_type',
+                    'department' => null
+                ];
+            }
+        }
+
+        // Combinar todas las sugerencias
+        $allSuggestions = array_merge($attractions, $departments, $typesSuggestions);
         
-        return array_slice(array_unique($suggestions), 0, $limit);
+        return array_slice($allSuggestions, 0, $limit);
     }
 
     /**

@@ -112,7 +112,7 @@ class AttractionApiController extends Controller
                     $query->orderBy('sort_order')->orderBy('created_at');
                 },
                 'tours' => function ($query) {
-                    $query->where('status', 'active')
+                    $query->where('is_active', true)
                         ->with(['schedules' => function ($scheduleQuery) {
                             $scheduleQuery->orderBy('day_of_week')->orderBy('start_time');
                         }]);
@@ -162,22 +162,28 @@ class AttractionApiController extends Controller
      */
     public function featured(Request $request): JsonResponse
     {
-        $limit = min($request->get('limit', 6), 20); // Max 20 featured
+        try {
+            $limit = min($request->get('limit', 6), 20); // Max 20 featured
 
-        $attractions = Attraction::active()
-            ->featured()
-            ->with(['department:id,name,slug', 'media' => function ($query) {
-                $query->where('type', 'image')->orderBy('sort_order')->limit(1);
-            }])
-            ->byRating('desc')
-            ->limit($limit)
-            ->get();
+            $attractions = Attraction::where('is_active', true)
+                ->where('is_featured', true)
+                ->with(['department:id,name,slug'])
+                ->orderBy('rating', 'desc')
+                ->limit($limit)
+                ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => $attractions,
-            'message' => 'Featured attractions retrieved successfully'
-        ]);
+            return response()->json([
+                'success' => true,
+                'data' => $attractions,
+                'message' => 'Featured attractions retrieved successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error retrieving featured attractions',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+            ], 500);
+        }
     }
 
     /**

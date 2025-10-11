@@ -1,0 +1,55 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mountainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ECEFF1;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#90A4AE;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#546E7A;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFD54F;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8F00;stop-opacity:0.8" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Sky -->
+  <rect width="400" height="300" fill="#E3F2FD"/>
+  
+  <!-- Sacred mountain -->
+  <path d="M200,50 L120,200 L280,200 Z" fill="url(#mountainGrad)"/>
+  
+  <!-- Snow cap -->
+  <path d="M200,50 L160,120 L240,120 Z" fill="white" opacity="0.9"/>
+  
+  <!-- Sacred symbols on mountain -->
+  <circle cx="200" cy="140" r="8" fill="#FFD700" opacity="0.8"/>
+  <path d="M200,132 L204,140 L200,148 L196,140 Z" fill="#FFD700" opacity="0.8"/>
+  
+  <!-- Smaller peaks -->
+  <path d="M0,180 L80,120 L160,160 L0,200 Z" fill="#78909C" opacity="0.7"/>
+  <path d="M240,160 L320,120 L400,180 L400,200 L240,200 Z" fill="#78909C" opacity="0.7"/>
+  
+  <!-- Sacred temple/structure at base -->
+  <rect x="180" y="190" width="40" height="20" fill="#8D6E63"/>
+  <polygon points="175,190 200,175 225,190" fill="#A1887F"/>
+  
+  <!-- Steps leading to temple -->
+  <rect x="185" y="210" width="30" height="3" fill="#795548"/>
+  <rect x="190" y="213" width="20" height="3" fill="#795548"/>
+  <rect x="195" y="216" width="10" height="3" fill="#795548"/>
+  
+  <!-- Sacred fire/light -->
+  <ellipse cx="200" cy="185" rx="3" ry="8" fill="#FF6F00" opacity="0.8"/>
+  <ellipse cx="200" cy="183" rx="2" ry="6" fill="#FFD54F" opacity="0.9"/>
+  
+  <!-- Mystical aura -->
+  <circle cx="200" cy="125" r="40" fill="none" stroke="#FFD700" stroke-width="1" opacity="0.3"/>
+  <circle cx="200" cy="125" r="60" fill="none" stroke="#FFD700" stroke-width="1" opacity="0.2"/>
+  
+  <!-- Clouds around peak -->
+  <ellipse cx="150" cy="100" rx="20" ry="10" fill="white" opacity="0.6"/>
+  <ellipse cx="250" cy="110" rx="25" ry="12" fill="white" opacity="0.6"/>
+  
+  <!-- Title -->
+  <text x="200" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#37474F">Cerro Sagrado</text>
+  <text x="200" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#546E7A">Montaña Sagrada</text>
+</svg>

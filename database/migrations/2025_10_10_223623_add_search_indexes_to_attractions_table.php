@@ -21,7 +21,8 @@ return new class extends Migration
             // Índice compuesto para búsquedas por texto (si la base de datos lo soporta)
             if (config('database.default') === 'pgsql') {
                 // Para PostgreSQL, crear índice GIN para búsqueda de texto completo
-                DB::statement('CREATE INDEX CONCURRENTLY IF NOT EXISTS attractions_search_gin_index ON attractions USING gin(to_tsvector(\'spanish\', name || \' \' || description))');
+                // Note: CONCURRENTLY cannot be used in transactions, so we use regular CREATE INDEX
+                DB::statement('CREATE INDEX IF NOT EXISTS attractions_search_gin_index ON attractions USING gin(to_tsvector(\'spanish\', name || \' \' || description))');
             }
         });
 

@@ -269,8 +269,19 @@
     - Escribir tests para flujo de moderación
     - _Requerimientos: 7.5_
 
-- [ ] 9. Desarrollar backoffice administrativo
-  - [ ] 9.1 Crear dashboard administrativo
+- [x] 9. Desarrollar backoffice administrativo
+
+
+
+
+
+  - [x] 9.1 Crear dashboard administrativo
+
+
+
+
+
+
     - Implementar AdminController con dashboard principal
     - Crear ReportController para estadísticas y reportes
     - Implementar métricas de reservas, usuarios y ingresos
@@ -278,7 +289,12 @@
     - Escribir tests para funcionalidades administrativas
     - _Requerimientos: 7.1, 7.5_
 
-  - [ ] 9.2 Implementar herramientas de gestión de usuarios
+  - [x] 9.2 Implementar herramientas de gestión de usuarios
+
+
+
+
+
     - Crear UserController para gestión administrativa de usuarios
     - Implementar funcionalidades de reseteo de contraseñas
     - Crear endpoints para activar/desactivar usuarios
@@ -303,8 +319,18 @@
     - Escribir tests para traducciones dinámicas
     - _Requerimientos: 8.4_
 
-- [ ] 11. Desarrollar componentes frontend Vue.js
-  - [ ] 11.1 Crear componentes de navegación y layout
+- [x] 11. Desarrollar componentes frontend Vue.js
+
+
+
+
+
+  - [x] 11.1 Crear componentes de navegación y layout
+
+
+
+
+
     - Implementar AppHeader.vue con navegación principal
     - Crear DepartmentGrid.vue para mostrar los 9 departamentos
     - Implementar AttractionCard.vue para tarjetas de atractivos
@@ -315,7 +341,12 @@
     - Escribir tests unitarios para componentes de layout
     - _Requerimientos: 1.1, 1.2_
 
-  - [ ] 11.2 Implementar componentes de búsqueda y filtros
+  - [x] 11.2 Implementar componentes de búsqueda y filtros
+
+
+
+
+
     - Crear SearchBar.vue con autocompletado
     - Implementar FilterPanel.vue con filtros avanzados
     - Crear InteractiveMap.vue con integración de mapas
@@ -323,8 +354,18 @@
     - Escribir tests para componentes de búsqueda
     - _Requerimientos: 2.1, 2.2, 2.3, 2.4_
 
-- [ ] 12. Implementar componentes de usuario y autenticación
-  - [ ] 12.1 Crear componentes de autenticación
+- [x] 12. Implementar componentes de usuario y autenticación
+
+
+
+
+
+  - [x] 12.1 Crear componentes de autenticación
+
+
+
+
+
     - Implementar AuthModal.vue para login/registro
     - Crear formularios de validación reactiva
     - Implementar integración con redes sociales
@@ -332,7 +373,12 @@
     - Escribir tests para componentes de autenticación
     - _Requerimientos: 3.1, 3.2, 3.3_
 
-  - [ ] 12.2 Desarrollar dashboard de usuario
+  - [x] 12.2 Desarrollar dashboard de usuario
+
+
+
+
+
     - Crear UserDashboard.vue con panel "Mi Viaje"
     - Implementar gestión de itinerario personal
     - Crear componentes para modificar/cancelar reservas
@@ -340,8 +386,16 @@
     - Escribir tests para dashboard de usuario
     - _Requerimientos: 5.1, 5.2, 5.3_
 
-- [ ] 13. Implementar componentes de reservas y pagos
-  - [ ] 13.1 Crear formularios de reserva
+- [x] 13. Implementar componentes de reservas y pagos
+
+
+
+
+  - [x] 13.1 Crear formularios de reserva
+
+
+
+
     - Implementar BookingForm.vue con selección de fechas
     - Crear componentes de calendario interactivo
     - Implementar validación de disponibilidad en tiempo real
@@ -349,7 +403,15 @@
     - Escribir tests para formularios de reserva
     - _Requerimientos: 4.1, 4.2, 4.3_
 
-  - [ ] 13.2 Desarrollar sistema de pagos frontend
+  - [x] 13.2 Desarrollar sistema de pagos frontend
+
+
+
+
+
+
+
+
     - Crear PaymentForm.vue con múltiples métodos de pago
     - Implementar integración segura con gateway de pagos
     - Crear componentes de confirmación y comprobantes

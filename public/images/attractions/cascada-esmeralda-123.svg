@@ -1,0 +1,56 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="waterfallGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E0F2F1;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#4DB6AC;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#00695C;stop-opacity:0.9" />
+    </linearGradient>
+    <radialGradient id="poolGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#A7FFEB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00BFA5;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="#E8F5E8"/>
+  
+  <!-- Rock formations -->
+  <path d="M0,100 L150,50 L250,80 L400,60 L400,300 L0,300 Z" fill="#795548"/>
+  <path d="M0,150 L200,120 L400,140 L400,300 L0,300 Z" fill="#8D6E63"/>
+  
+  <!-- Waterfall -->
+  <path d="M180,50 L185,250" stroke="url(#waterfallGrad)" stroke-width="15" opacity="0.8"/>
+  <path d="M185,50 L190,250" stroke="url(#waterfallGrad)" stroke-width="12" opacity="0.9"/>
+  <path d="M190,50 L195,250" stroke="url(#waterfallGrad)" stroke-width="10" opacity="0.7"/>
+  
+  <!-- Water spray -->
+  <circle cx="175" cy="100" r="2" fill="#B2DFDB" opacity="0.6"/>
+  <circle cx="200" cy="120" r="1.5" fill="#B2DFDB" opacity="0.5"/>
+  <circle cx="170" cy="150" r="1" fill="#B2DFDB" opacity="0.7"/>
+  <circle cx="205" cy="180" r="2" fill="#B2DFDB" opacity="0.4"/>
+  
+  <!-- Emerald pool -->
+  <ellipse cx="190" cy="260" rx="40" ry="15" fill="url(#poolGrad)"/>
+  
+  <!-- Vegetation -->
+  <circle cx="100" cy="180" r="20" fill="#4CAF50"/>
+  <rect x="95" y="190" width="10" height="15" fill="#8D6E63"/>
+  
+  <circle cx="300" cy="160" r="25" fill="#4CAF50"/>
+  <rect x="295" y="175" width="10" height="20" fill="#8D6E63"/>
+  
+  <circle cx="50" cy="200" r="15" fill="#66BB6A"/>
+  <rect x="45" y="210" width="10" height="12" fill="#8D6E63"/>
+  
+  <!-- Ferns -->
+  <path d="M120,220 Q125,210 130,220 Q135,210 140,220" stroke="#4CAF50" stroke-width="3" fill="none"/>
+  <path d="M260,200 Q265,190 270,200 Q275,190 280,200" stroke="#4CAF50" stroke-width="3" fill="none"/>
+  
+  <!-- Rocks in pool -->
+  <ellipse cx="170" cy="265" rx="8" ry="4" fill="#6D4C41"/>
+  <ellipse cx="210" cy="262" rx="6" ry="3" fill="#795548"/>
+  
+  <!-- Title -->
+  <text x="200" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#00695C">Cascada Esmeralda</text>
+  <text x="200" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#4DB6AC">Cascada Natural</text>
+</svg>
