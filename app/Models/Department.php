@@ -107,9 +107,9 @@ class Department extends Model
     public function scopeSearch(Builder $query, string $search): Builder
     {
         return $query->where(function ($q) use ($search) {
-            $q->where('name', 'ILIKE', "%{$search}%")
-              ->orWhere('capital', 'ILIKE', "%{$search}%")
-              ->orWhere('description', 'ILIKE', "%{$search}%");
+            $q->where('name', 'LIKE', "%{$search}%")
+              ->orWhere('capital', 'LIKE', "%{$search}%")
+              ->orWhere('description', 'LIKE', "%{$search}%");
         });
     }
 

@@ -38,6 +38,8 @@ class User extends Authenticatable
         'last_login_at',
         'last_login_ip',
         'is_active',
+        'social_provider',
+        'social_id',
     ];
 
     /**

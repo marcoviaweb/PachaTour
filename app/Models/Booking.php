@@ -121,10 +121,9 @@ class Booking extends Model
     /**
      * Tour reservado (a través del horario)
      */
-    public function tour(): BelongsTo
+    public function tour(): ?Tour
     {
-        return $this->belongsTo(Tour::class, 'tour_schedule_id', 'id')
-                    ->through('tourSchedule');
+        return $this->tourSchedule?->tour;
     }
 
     /**

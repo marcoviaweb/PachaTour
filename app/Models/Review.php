@@ -174,8 +174,8 @@ class Review extends Model
     public function scopeSearch(Builder $query, string $search): Builder
     {
         return $query->where(function ($q) use ($search) {
-            $q->where('title', 'ILIKE', "%{$search}%")
-              ->orWhere('comment', 'ILIKE', "%{$search}%");
+            $q->where('title', 'LIKE', "%{$search}%")
+              ->orWhere('comment', 'LIKE', "%{$search}%");
         });
     }
 

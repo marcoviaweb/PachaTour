@@ -177,10 +177,12 @@ class Attraction extends Model
      */
     public function scopeSearch(Builder $query, string $search): Builder
     {
-        return $query->where(function ($q) use ($search) {
-            $q->where('name', 'ILIKE', "%{$search}%")
-              ->orWhere('description', 'ILIKE', "%{$search}%")
-              ->orWhere('city', 'ILIKE', "%{$search}%");
+        $operator = config('database.default') === 'pgsql' ? 'ILIKE' : 'LIKE';
+        
+        return $query->where(function ($q) use ($search, $operator) {
+            $q->where('name', $operator, "%{$search}%")
+              ->orWhere('description', $operator, "%{$search}%")
+              ->orWhere('city', $operator, "%{$search}%");
         });
     }
 
@@ -276,6 +278,10 @@ class Attraction extends Model
      */
     public function getRouteKeyName(): string
     {
+        // Use slug for public routes, id for admin routes
+        if (request()->is('api/admin/*')) {
+            return 'id';
+        }
         return 'slug';
     }
 

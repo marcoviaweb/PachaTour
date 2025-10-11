@@ -85,15 +85,24 @@
     - Verificar datos en base de datos y probar consultas básicas
     - _Requerimientos: 1.1, 3.1, 4.1, 7.1_
 
-- [ ] 3. Implementar sistema de autenticación
-  - [ ] 3.1 Configurar autenticación Laravel Sanctum
+- [x] 3. Implementar sistema de autenticación
+
+
+
+
+
+  - [x] 3.1 Configurar autenticación Laravel Sanctum
+
+
     - Instalar y configurar Laravel Sanctum para SPA
     - Crear middleware de autenticación personalizado
     - Implementar roles de usuario (visitor, tourist, admin)
     - Escribir tests para middleware de autenticación
     - _Requerimientos: 3.1, 3.4_
 
-  - [ ] 3.2 Crear controladores y rutas de autenticación
+  - [x] 3.2 Crear controladores y rutas de autenticación
+
+
     - Implementar AuthController con métodos login, register, logout
     - Crear SocialAuthController para login con redes sociales
     - Definir rutas protegidas y públicas
@@ -101,8 +110,18 @@
     - Escribir tests de feature para flujos de autenticación
     - _Requerimientos: 3.2, 3.3_
 
-- [ ] 4. Desarrollar funcionalidades de exploración de destinos
-  - [ ] 4.1 Implementar gestión de departamentos
+- [x] 4. Desarrollar funcionalidades de exploración de destinos
+
+
+
+
+
+
+
+  - [x] 4.1 Implementar gestión de departamentos
+
+
+
     - Crear DepartmentController con métodos index y show
     - Implementar DepartmentApiController para endpoints públicos
     - Definir rutas API en routes/api.php
@@ -111,7 +130,12 @@
     - Escribir tests para endpoints de departamentos
     - _Requerimientos: 1.1_
 
-  - [ ] 4.2 Implementar gestión de atractivos turísticos
+  - [x] 4.2 Implementar gestión de atractivos turísticos
+
+
+
+
+
     - Crear AttractionController con CRUD completo
     - Implementar AttractionApiController para consultas públicas
     - Crear MediaController para gestión de imágenes y videos
@@ -122,8 +146,15 @@
     - Escribir tests para CRUD de atractivos
     - _Requerimientos: 1.3, 1.4, 7.2, 7.3_
 
-- [ ] 5. Desarrollar sistema de búsqueda y filtrado
-  - [ ] 5.1 Implementar motor de búsqueda
+- [x] 5. Desarrollar sistema de búsqueda y filtrado
+
+
+
+
+
+  - [x] 5.1 Implementar motor de búsqueda
+
+
     - Crear SearchService para lógica de búsqueda
     - Implementar búsqueda por nombre, departamento y tipo de turismo
     - Crear SearchController con endpoint de búsqueda
@@ -131,7 +162,9 @@
     - Escribir tests para funcionalidades de búsqueda
     - _Requerimientos: 2.1, 2.2_
 
-  - [ ] 5.2 Implementar sistema de filtros avanzados
+  - [x] 5.2 Implementar sistema de filtros avanzados
+
+
     - Crear FilterService para lógica de filtrado
     - Implementar filtros por precio, distancia, valoración y adecuación
     - Crear endpoints API para filtros dinámicos
@@ -139,8 +172,17 @@
     - Escribir tests para filtros avanzados
     - _Requerimientos: 2.3_
 
-- [ ] 6. Desarrollar sistema de tours y reservas
-  - [ ] 6.1 Implementar gestión de tours
+- [x] 6. Desarrollar sistema de tours y reservas
+
+
+
+
+
+
+  - [x] 6.1 Implementar gestión de tours
+
+
+
     - Crear TourController con CRUD de tours
     - Implementar TourScheduleController para horarios
     - Crear AvailabilityController para consulta de disponibilidad
@@ -148,7 +190,12 @@
     - Escribir tests para gestión de tours
     - _Requerimientos: 4.1, 4.2, 7.4_
 
-  - [ ] 6.2 Implementar sistema de reservas
+  - [x] 6.2 Implementar sistema de reservas
+
+
+
+
+
     - Crear BookingController con lógica de reservas
     - Implementar BookingService para validaciones de negocio
     - Crear endpoints para crear, modificar y cancelar reservas
@@ -159,8 +206,14 @@
     - Escribir tests para flujo completo de reservas
     - _Requerimientos: 4.2, 4.3, 5.2, 5.3_
 
-- [ ] 7. Implementar sistema de pagos y comisiones
-  - [ ] 7.1 Integrar gateway de pagos
+- [x] 7. Implementar sistema de pagos y comisiones
+
+
+
+
+  - [x] 7.1 Integrar gateway de pagos
+
+
     - Configurar integración con gateway de pagos (Stripe/PayPal)
     - Crear PaymentController para procesamiento de pagos
     - Implementar PaymentService con lógica de transacciones
@@ -168,7 +221,8 @@
     - Escribir tests para procesamiento de pagos
     - _Requerimientos: 4.4, 4.5, 10.2_
 
-  - [ ] 7.2 Implementar sistema de comisiones
+  - [x] 7.2 Implementar sistema de comisiones
+
     - Crear CommissionService para cálculo de comisiones
     - Implementar CommissionController para gestión administrativa
     - Crear InvoiceController para generación de comprobantes
@@ -176,8 +230,23 @@
     - Escribir tests para cálculos de comisiones
     - _Requerimientos: 10.1, 10.3, 10.4_
 
-- [ ] 8. Desarrollar sistema de valoraciones y comentarios
-  - [ ] 8.1 Implementar CRUD de reviews
+- [x] 8. Desarrollar sistema de valoraciones y comentarios
+
+
+
+
+
+
+
+
+
+
+
+  - [x] 8.1 Implementar CRUD de reviews
+
+
+
+
     - Crear ReviewController con operaciones CRUD
     - Implementar validaciones para valoraciones (1-5 estrellas)
     - Crear endpoints para listar reviews por atractivo
@@ -185,7 +254,14 @@
     - Escribir tests para sistema de reviews
     - _Requerimientos: 6.1, 6.2, 6.3, 6.4_
 
-  - [ ] 8.2 Implementar moderación de contenido
+  - [x] 8.2 Implementar moderación de contenido
+
+
+
+
+
+
+
     - Crear ModerationController para administradores
     - Implementar estados de moderación (pending, approved, rejected)
     - Crear endpoints para aprobar/rechazar comentarios

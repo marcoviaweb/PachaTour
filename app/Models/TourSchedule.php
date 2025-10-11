@@ -107,7 +107,7 @@ class TourSchedule extends Model
      */
     public function scopeOnDate(Builder $query, Carbon $date): Builder
     {
-        return $query->where('date', $date->toDateString());
+        return $query->whereDate('date', $date->toDateString());
     }
 
     /**
@@ -160,9 +160,19 @@ class TourSchedule extends Model
     /**
      * Cupos restantes
      */
-    public function getRemainingSpots(): int
+    public function getRemainingSpots(int $excludeBookingId = null): int
     {
-        return max(0, $this->available_spots - $this->booked_spots);
+        $bookedSpots = $this->booked_spots;
+        
+        // If excluding a specific booking, subtract its participants from booked spots
+        if ($excludeBookingId) {
+            $excludedBooking = $this->bookings()->find($excludeBookingId);
+            if ($excludedBooking) {
+                $bookedSpots -= $excludedBooking->participants_count;
+            }
+        }
+        
+        return max(0, $this->available_spots - $bookedSpots);
     }
 
     /**
