@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Features\Departments\Controllers\DepartmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,21 +14,55 @@ use App\Features\Departments\Controllers\DepartmentController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-// Test routes for feature structure
-Route::prefix('departments')->group(function () {
-    Route::get('/', [DepartmentController::class, 'index']);
-    Route::get('/{slug}', [DepartmentController::class, 'show']);
-});
-
 // Health check route to test the API
 Route::get('/health', function () {
     return response()->json([
         'status' => 'ok',
         'message' => 'Pacha Tour API is running',
-        'timestamp' => now()->toISOString()
+        'timestamp' => date('Y-m-d H:i:s')
     ]);
+});
+
+// Test routes for feature structure
+Route::get('/departments', function () {
+    try {
+        $departmentService = new \App\Features\Departments\Services\DepartmentService();
+        $departments = $departmentService->getAllDepartments();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Departamentos obtenidos correctamente',
+            'data' => $departments
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
+
+Route::get('/departments/{slug}', function ($slug) {
+    try {
+        $departmentService = new \App\Features\Departments\Services\DepartmentService();
+        $department = $departmentService->getDepartmentBySlug($slug);
+        
+        if (!$department) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Departamento no encontrado'
+            ], 404);
+        }
+        
+        return response()->json([
+            'success' => true,
+            'message' => "Departamento {$slug} encontrado",
+            'data' => $department
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
 });

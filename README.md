@@ -10,40 +10,48 @@ Plataforma digital integral para promocionar y facilitar la experiencia turísti
 - PostgreSQL >= 13
 - Git
 
-## Instalación
+## 🚀 Instalación Rápida
 
-### 1. Instalar dependencias PHP
+### Opción 1: Instalación Automática (Recomendada)
+
+**Windows:**
 ```bash
-composer install
+# Ejecutar script de instalación
+install.bat
 ```
 
-### 2. Configurar variables de entorno
+**Linux/macOS:**
 ```bash
-cp .env.example .env
-php artisan key:generate
+# Dar permisos y ejecutar
+chmod +x install.sh
+./install.sh
 ```
 
-### 3. Configurar base de datos PostgreSQL
-- Crear base de datos `pacha_tour_db`
-- Actualizar credenciales en `.env`:
-```
-DB_CONNECTION=pgsql
-DB_HOST=127.0.0.1
-DB_PORT=5432
-DB_DATABASE=pacha_tour_db
-DB_USERNAME=postgres
-DB_PASSWORD=tu_password
-```
+### Opción 2: Instalación con Docker
 
-### 4. Ejecutar migraciones
 ```bash
-php artisan migrate
+# Clonar repositorio
+git clone [URL_REPOSITORIO] pacha-tour
+cd pacha-tour
+
+# Iniciar con Docker
+docker-compose up -d
+
+# Ejecutar migraciones
+docker-compose exec app php artisan migrate
 ```
 
-### 5. Instalar dependencias frontend (después de configurar Breeze)
+### Opción 3: Instalación Manual
+
+Ver guía completa en [INSTALACION.md](INSTALACION.md)
+
+## ⚡ Inicio Rápido
+
 ```bash
-npm install
-npm run dev
+# Después de la instalación
+php artisan serve
+
+# Visitar: http://localhost:8000
 ```
 
 ## Desarrollo

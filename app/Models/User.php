@@ -19,12 +19,25 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'last_name',
         'email',
         'password',
         'role',
         'phone',
+        'birth_date',
+        'gender',
         'nationality',
+        'country',
+        'city',
         'preferred_language',
+        'interests',
+        'bio',
+        'avatar_path',
+        'newsletter_subscription',
+        'marketing_emails',
+        'last_login_at',
+        'last_login_ip',
+        'is_active',
     ];
 
     /**
@@ -45,6 +58,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'interests' => 'array',
+        'birth_date' => 'date',
+        'last_login_at' => 'datetime',
+        'newsletter_subscription' => 'boolean',
+        'marketing_emails' => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     /**
@@ -68,5 +87,65 @@ class User extends Authenticatable
     public function isTourist(): bool
     {
         return $this->role === self::ROLE_TOURIST;
+    }
+
+    // Relaciones
+
+    /**
+     * Reservas del usuario
+     */
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    /**
+     * Reseñas escritas por el usuario
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Reseñas moderadas por el usuario (si es admin)
+     */
+    public function moderatedReviews()
+    {
+        return $this->hasMany(Review::class, 'moderated_by');
+    }
+
+    // Scopes
+
+    /**
+     * Solo usuarios activos
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * Filtrar por rol
+     */
+    public function scopeWithRole($query, string $role)
+    {
+        return $query->where('role', $role);
+    }
+
+    /**
+     * Usuarios administradores
+     */
+    public function scopeAdmins($query)
+    {
+        return $query->where('role', self::ROLE_ADMIN);
+    }
+
+    /**
+     * Usuarios turistas
+     */
+    public function scopeTourists($query)
+    {
+        return $query->where('role', self::ROLE_TOURIST);
     }
 }

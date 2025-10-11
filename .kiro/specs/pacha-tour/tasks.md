@@ -1,6 +1,8 @@
 # Plan de Implementación - Pacha Tour
 
-- [-] 1. Crear proyecto Laravel desde cero
+- [x] 1. Crear proyecto Laravel desde cero
+
+
 
 
 
@@ -31,7 +33,8 @@
     - Configurar hot reload para desarrollo eficiente
     - _Requerimientos: Base del proyecto_
 
-  - [ ] 1.4 Implementar estructura por features
+  - [x] 1.4 Implementar estructura por features
+
 
 
     - Crear directorios en app/Features/ para cada módulo
@@ -41,7 +44,11 @@
     - _Requerimientos: Todos los requerimientos base_
 
 - [ ] 2. Implementar modelos de datos y migraciones
-  - [ ] 2.1 Crear migraciones para entidades principales
+  - [x] 2.1 Crear migraciones para entidades principales
+
+
+
+
     - Escribir migraciones para departments, attractions, tours, tour_schedules
     - Crear migraciones para users, bookings, reviews, media
     - Implementar índices y constraints de base de datos
@@ -49,7 +56,11 @@
     - Verificar estructura en base de datos usando herramienta GUI o CLI
     - _Requerimientos: 1.1, 7.2_
 
-  - [ ] 2.2 Implementar modelos Eloquent con relaciones
+  - [x] 2.2 Implementar modelos Eloquent con relaciones
+
+
+
+
     - Crear modelos Department, Attraction, Tour, TourSchedule
     - Implementar modelos User, Booking, Review, Media
     - Definir todas las relaciones entre modelos (hasMany, belongsTo, morphMany)
@@ -57,7 +68,15 @@
     - Escribir tests unitarios para relaciones de modelos
     - _Requerimientos: 1.1, 4.1, 6.1, 7.2_
 
-  - [ ] 2.3 Crear seeders y factories para datos de prueba
+  - [x] 2.3 Crear seeders y factories para datos de prueba
+
+
+
+
+
+
+
+
     - Crear DepartmentSeeder con los 9 departamentos de Bolivia
     - Implementar AttractionFactory y AttractionSeeder con datos realistas
     - Crear UserFactory con usuarios de prueba (admin, turistas)
