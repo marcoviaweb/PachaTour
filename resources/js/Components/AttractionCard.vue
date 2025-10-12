@@ -140,12 +140,12 @@ export default {
       
       // Imagen por defecto basada en el slug o nombre
       const slug = props.attraction.slug || props.attraction.name.toLowerCase().replace(/\s+/g, '-')
-      return `/images/attractions/${slug}.svg`
+      return `/images/attractions/${slug}.jpg`
     }
 
     const handleImageError = (event) => {
       // Imagen de fallback
-      event.target.src = '/images/placeholder.svg'
+      event.target.src = '/images/placeholder-attraction.jpg'
     }
 
     const getTourismTypeLabel = () => {

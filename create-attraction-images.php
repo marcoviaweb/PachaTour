@@ -72,7 +72,7 @@ $created = 0;
 $skipped = 0;
 
 foreach ($commonAttractions as $slug => $data) {
-    $filename = "public/images/attractions/{$slug}.svg";
+    $filename = "public/images/attractions/{$slug}.jpg";
     
     if (!file_exists($filename)) {
         $svg = createSVG($slug, $data);
@@ -84,7 +84,7 @@ foreach ($commonAttractions as $slug => $data) {
         }
         
         file_put_contents($filename, $svg);
-        echo "✅ Creada: {$data['name']} ({$slug}.svg)\n";
+        echo "✅ Creada: {$data['name']} ({$slug}.jpg)\n";
         $created++;
     } else {
         echo "⏭️  Ya existe: {$data['name']}\n";

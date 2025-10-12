@@ -233,13 +233,13 @@ $generated = 0;
 
 foreach ($attractions as $attraction) {
     $slug = $attraction->slug;
-    $imagePath = "public/images/attractions/{$slug}.svg";
+    $imagePath = "public/images/attractions/{$slug}.jpg";
     
     // Solo generar si no existe la imagen
     if (!file_exists($imagePath)) {
         $svg = generateSVG($attraction);
         file_put_contents($imagePath, $svg);
-        echo "✅ Generada imagen para: {$attraction->name} ({$slug}.svg)\n";
+        echo "✅ Generada imagen para: {$attraction->name} ({$slug}.jpg)\n";
         $generated++;
     } else {
         echo "⏭️  Ya existe imagen para: {$attraction->name}\n";
