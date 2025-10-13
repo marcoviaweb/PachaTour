@@ -389,7 +389,7 @@ export default {
       }
 
       try {
-        await axios.delete(`/api/reviews/${review.id}`)
+        await axios.delete(`/api/user/reviews/${review.id}`)
         await fetchUserReviews()
         await fetchDashboardStats()
         alert('Reseña eliminada exitosamente')
@@ -432,12 +432,14 @@ export default {
       try {
         if (selectedReview.value) {
           // Edit existing review
-          await axios.put(`/api/reviews/${selectedReview.value.id}`, reviewData)
+          await axios.put(`/api/user/reviews/${selectedReview.value.id}`, reviewData)
         } else {
           // Create new review
-          await axios.post('/api/reviews', {
+          await axios.post('/api/user/reviews', {
             ...reviewData,
-            booking_id: selectedBooking.value.id
+            booking_id: selectedBooking.value.id,
+            reviewable_type: 'App\\Models\\Attraction',
+            reviewable_id: reviewData.attraction_id || selectedBooking.value.attraction_id
           })
         }
         closeReviewModal()

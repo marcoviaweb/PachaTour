@@ -133,14 +133,6 @@
             >
               Escribir Reseña
             </button>
-
-            <button
-              v-if="canRepeatBooking(booking)"
-              @click="handleRepeatBooking(booking)"
-              class="text-purple-600 hover:text-purple-800 text-sm font-medium"
-            >
-              Repetir Tour
-            </button>
           </div>
         </div>
 
@@ -263,17 +255,6 @@ export default {
         'no_show': 'bg-gray-100 text-gray-800'
       }
       return classes[status] || 'bg-gray-100 text-gray-800'
-    },
-
-    canRepeatBooking(booking) {
-      return ['completed', 'cancelled'].includes(booking.status)
-    },
-
-    handleRepeatBooking(booking) {
-      // Redirect to attraction page for new booking
-      if (booking.attraction_slug) {
-        window.location.href = `/atractivos/${booking.attraction_slug}`
-      }
     }
   }
 }

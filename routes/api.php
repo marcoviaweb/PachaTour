@@ -520,5 +520,10 @@ Route::middleware(['auth:web'])->group(function () {
         Route::get('/profile', [UserDashboardController::class, 'profile'])->name('profile');
         Route::put('/profile', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
         Route::post('/change-password', [UserDashboardController::class, 'changePassword'])->name('password.change');
+        
+        // Reviews management for web authenticated users
+        Route::post('/reviews', [\App\Features\Reviews\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+        Route::put('/reviews/{review}', [\App\Features\Reviews\Controllers\ReviewController::class, 'update'])->name('reviews.update');
+        Route::delete('/reviews/{review}', [\App\Features\Reviews\Controllers\ReviewController::class, 'destroy'])->name('reviews.delete');
     });
 });
