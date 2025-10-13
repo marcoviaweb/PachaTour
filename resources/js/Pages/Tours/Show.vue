@@ -62,7 +62,7 @@
                       <svg class="w-4 h-4 text-yellow-400 fill-current mr-1" viewBox="0 0 20 20">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                       </svg>
-                      {{ tour.rating.toFixed(1) }} ({{ tour.reviews_count || 0 }} reseñas)
+                      {{ getRatingNumber().toFixed(1) }} ({{ tour.reviews_count || 0 }} reseñas)
                     </div>
                     <div>{{ formatDuration() }}</div>
                     <div v-if="tour.difficulty_level">{{ getDifficultyLabel(tour.difficulty_level) }}</div>
@@ -286,10 +286,10 @@
                     <div class="flex justify-between items-center">
                       <div>
                         <div class="font-medium text-sm">
-                          {{ formatScheduleDate(schedule.date_time) }}
+                          {{ formatScheduleDate(schedule) }}
                         </div>
                         <div class="text-xs text-gray-500">
-                          {{ formatScheduleTime(schedule.date_time) }}
+                          {{ formatScheduleTime(schedule) }}
                         </div>
                       </div>
                       <div class="text-right">
@@ -317,7 +317,7 @@
                 @click="handleBooking"
                 class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
               >
-                Reservar para {{ formatScheduleDate(selectedSchedule.date_time) }}
+                Reservar para {{ formatScheduleDateTime(selectedSchedule) }}
               </button>
             </section>
 
@@ -391,6 +391,12 @@ const heroImage = computed(() => {
 })
 
 // Methods
+const getRatingNumber = () => {
+  if (!props.tour.rating) return 0
+  const rating = typeof props.tour.rating === 'string' ? parseFloat(props.tour.rating) : props.tour.rating
+  return isNaN(rating) ? 0 : rating
+}
+
 const formatPrice = (price) => {
   return new Intl.NumberFormat('es-BO').format(price)
 }
@@ -452,19 +458,50 @@ const formatDate = (date) => {
   })
 }
 
-const formatScheduleDate = (dateTime) => {
-  return new Date(dateTime).toLocaleDateString('es-ES', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short'
-  })
+const formatScheduleDate = (schedule) => {
+  if (!schedule || !schedule.date) return 'Invalid Date'
+  
+  try {
+    return new Date(schedule.date).toLocaleDateString('es-ES', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short'
+    })
+  } catch (e) {
+    return 'Invalid Date'
+  }
 }
 
-const formatScheduleTime = (dateTime) => {
-  return new Date(dateTime).toLocaleTimeString('es-ES', {
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+const formatScheduleTime = (schedule) => {
+  if (!schedule || !schedule.start_time) return '--:--'
+  
+  try {
+    // El start_time ya viene en formato HH:mm, solo necesitamos formatearlo
+    const timeParts = schedule.start_time.split(':')
+    if (timeParts.length >= 2) {
+      const hours = timeParts[0].padStart(2, '0')
+      const minutes = timeParts[1].padStart(2, '0')
+      return `${hours}:${minutes}`
+    }
+    return schedule.start_time
+  } catch (e) {
+    return '--:--'
+  }
+}
+
+const formatScheduleDateTime = (schedule) => {
+  if (!schedule || !schedule.date) return 'Invalid Date'
+  
+  try {
+    return new Date(schedule.date).toLocaleDateString('es-ES', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    })
+  } catch (e) {
+    return 'Invalid Date'
+  }
 }
 
 const selectSchedule = (schedule) => {
@@ -482,6 +519,6 @@ const handleBooking = () => {
   if (!selectedSchedule.value) return
   
   // TODO: Implement booking logic
-  alert(`Funcionalidad de reserva pendiente de implementar para ${formatScheduleDate(selectedSchedule.value.date_time)}`)
+  alert(`Funcionalidad de reserva pendiente de implementar para ${formatScheduleDateTime(selectedSchedule.value)}`)
 }
 </script>

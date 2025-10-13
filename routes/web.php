@@ -189,7 +189,7 @@ Route::get('/tours/{slug}', function ($slug) {
             ->with([
                 'attractions' => function ($query) {
                     $query->with(['department', 'media'])
-                        ->orderBy('pivot.visit_order');
+                        ->orderByPivot('visit_order');
                 },
                 'schedules' => function ($query) {
                     $query->upcoming()->available();
