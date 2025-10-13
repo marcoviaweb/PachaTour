@@ -24,7 +24,7 @@ class ReviewController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Review::with(['user:id,name', 'booking:id,booking_date'])
+        $query = Review::with(['user:id,name', 'booking:id,created_at'])
             ->approved()
             ->recent();
 

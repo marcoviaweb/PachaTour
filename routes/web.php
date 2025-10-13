@@ -71,6 +71,46 @@ Route::get('/test-attractions', function () {
     }
 });
 
+// Ruta de prueba directa para reviews
+Route::get('/test-reviews-direct', function () {
+    try {
+        $userId = 24; // Juan Pérez
+        $reviews = \App\Models\Review::where('user_id', $userId)
+            ->with(['reviewable'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        $mappedReviews = $reviews->map(function ($review) {
+            $reviewable = $review->reviewable;
+            
+            return [
+                'id' => $review->id,
+                'rating' => (float) $review->rating,
+                'title' => $review->title,
+                'comment' => $review->comment,
+                'status' => $review->status,
+                'status_name' => ucfirst($review->status),
+                'attraction_name' => $reviewable?->name ?? 'Atracción no disponible',
+                'attraction_slug' => $reviewable?->slug,
+                'department_name' => $reviewable?->department?->name,
+                'helpful_count' => $review->helpful_votes ?? 0,
+                'created_at' => $review->created_at,
+                'updated_at' => $review->updated_at,
+            ];
+        });
+        
+        return response()->json(['data' => $mappedReviews]);
+        
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ], 500);
+    }
+});
+
 // Ruta principal usando Inertia.js y Vue.js
 // Authentication routes (web views)
 Route::get('/login', function () {

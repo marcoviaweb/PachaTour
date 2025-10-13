@@ -214,7 +214,7 @@
 
 <script>
 import { Head, Link } from '@inertiajs/vue3'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import UpcomingBookings from '@/Components/User/UpcomingBookings.vue'
 import BookingHistory from '@/Components/User/BookingHistory.vue'
@@ -538,13 +538,15 @@ export default {
     })
 
     // Watch active tab changes
-    const watchActiveTab = computed(() => activeTab.value)
-    watchActiveTab.value && loadTabData()
+    watch(activeTab, () => {
+      loadTabData()
+    })
 
     onMounted(() => {
       fetchDashboardStats()
       fetchUpcomingBookings() // Load default tab
       fetchBookingHistory() // Always load history on mount
+      loadTabData() // Load data for initial tab
     })
 
     return {

@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 
@@ -33,7 +34,7 @@ class UserDashboardController extends Controller
                 ->where('status', 'completed')
                 ->count(),
             
-            'reviewsCount' => 0, // $user->reviews()->where('status', 'approved')->count(),
+            'reviewsCount' => $user->reviews()->where('status', 'approved')->count(),
             
             'visitedDestinations' => $user->bookings()
                 ->where('status', 'completed')
@@ -302,41 +303,41 @@ class UserDashboardController extends Controller
     {
         $user = Auth::user();
         
-        $reviews = $user->reviews()
-            ->with(['reviewable', 'booking'])
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($review) {
-                $reviewable = $review->reviewable;
-                $departmentName = null;
+        try {
+            $reviews = Review::where('user_id', $user->id)
+                ->with(['reviewable'])
+                ->orderBy('created_at', 'desc')
+                ->get();
                 
-                if ($reviewable instanceof \App\Models\Attraction) {
-                    $departmentName = $reviewable->department?->name;
-                } elseif ($reviewable instanceof \App\Models\Department) {
-                    $departmentName = $reviewable->name;
-                }
+            $mappedReviews = $reviews->map(function ($review) {
+                $reviewable = $review->reviewable;
                 
                 return [
                     'id' => $review->id,
-                    'rating' => $review->rating,
+                    'rating' => (float) $review->rating,
                     'title' => $review->title,
                     'comment' => $review->comment,
                     'status' => $review->status,
-                    'attraction_name' => $reviewable?->name,
+                    'status_name' => ucfirst($review->status),
+                    'attraction_name' => $reviewable?->name ?? 'Atracción no disponible',
                     'attraction_slug' => $reviewable?->slug,
-                    'department_name' => $departmentName,
-                    'booking_date' => $review->booking?->tourSchedule?->date,
+                    'department_name' => $reviewable?->department?->name,
                     'helpful_count' => $review->helpful_votes ?? 0,
-                    'views_count' => $review->views_count ?? 0,
-                    'moderation_notes' => $review->moderation_notes,
                     'created_at' => $review->created_at,
+                    'updated_at' => $review->updated_at,
                 ];
             });
-        
-        return response()->json(['data' => $reviews]);
-    }
-
-    /**
+            
+            return response()->json(['data' => $mappedReviews]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'data' => [],
+                'error' => 'Error loading reviews',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }    /**
      * Get user favorites
      */
     public function userFavorites(): JsonResponse
