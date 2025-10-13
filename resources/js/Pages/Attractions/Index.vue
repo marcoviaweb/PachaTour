@@ -42,7 +42,7 @@
           :attractions="attractions"
           :loading="loading"
           :search-query="searchQuery"
-          :total-count="totalCount"
+          :total="totalCount"
           :current-page="currentPage"
           :per-page="perPage"
           @view-attraction="handleViewAttraction"
@@ -56,7 +56,7 @@
         <SearchPagination
           :current-page="currentPage"
           :total-pages="totalPages"
-          :total-count="totalCount"
+          :total="totalCount"
           :per-page="perPage"
           @page-change="handlePageChange"
         />
@@ -144,9 +144,9 @@ export default {
 
         const response = await axios.get('/api/attractions', { params })
         
-        attractions.value = response.data.data
-        totalCount.value = response.data.total
-        currentPage.value = response.data.current_page
+        attractions.value = response.data.data.data
+        totalCount.value = response.data.data.total
+        currentPage.value = response.data.data.current_page
         
         // Update filter counts if available
         if (response.data.filters) {
@@ -164,7 +164,7 @@ export default {
     const fetchDepartments = async () => {
       try {
         const response = await axios.get('/api/departments')
-        filters.value.departments = response.data.map(dept => ({
+        filters.value.departments = response.data.data.map(dept => ({
           id: dept.id,
           name: dept.name,
           slug: dept.slug,
