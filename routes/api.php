@@ -322,6 +322,7 @@ Route::middleware(['auth:sanctum', 'auth.api'])->group(function () {
         Route::get('/methods', [PaymentController::class, 'getPaymentMethods']);
         Route::get('/{paymentId}/status', [PaymentController::class, 'getPaymentStatus']);
         Route::post('/{paymentId}/refund', [PaymentController::class, 'refundPayment']);
+        Route::post('/booking/{booking}/confirm', [PaymentController::class, 'confirmPayment']);
     });
     
     Route::prefix('invoices')->group(function () {
@@ -376,7 +377,7 @@ Route::middleware(['auth:sanctum', 'auth.api', 'role:admin'])->group(function ()
 use App\Features\Users\Controllers\UserDashboardController;
 
 // User dashboard routes (Authenticated users)
-Route::middleware(['auth:sanctum', 'auth.api'])->group(function () {
+Route::middleware(['auth:web'])->group(function () {
     Route::prefix('user')->name('user.')->group(function () {
         // Dashboard stats and data
         Route::get('/dashboard/stats', [UserDashboardController::class, 'dashboardStats'])->name('dashboard.stats');

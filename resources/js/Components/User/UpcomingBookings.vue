@@ -133,7 +133,10 @@
             </svg>
             <span class="text-sm text-yellow-800">
               Pago pendiente - 
-              <button class="font-medium underline hover:no-underline">
+              <button 
+                @click="$emit('complete-payment', booking)"
+                class="font-medium underline hover:no-underline"
+              >
                 Completar pago
               </button>
             </span>
@@ -177,7 +180,7 @@ export default {
       default: false
     }
   },
-  emits: ['view-details', 'modify', 'cancel'],
+  emits: ['view-details', 'modify', 'cancel', 'complete-payment'],
   methods: {
     formatDate(date) {
       if (!date) return ''

@@ -142,6 +142,7 @@
             @modify="handleModifyBooking"
             @cancel="handleCancelBooking"
             @view-details="handleViewBookingDetails"
+            @complete-payment="handleCompletePayment"
           />
         </div>
 
@@ -201,6 +202,13 @@
       @close="closeReviewModal"
       @save="handleSaveReview"
     />
+
+    <PaymentModal
+      :show="showPaymentModal"
+      :booking="selectedBooking"
+      @close="closePaymentModal"
+      @payment-completed="handlePaymentCompleted"
+    />
   </AppLayout>
 </template>
 
@@ -215,6 +223,7 @@ import UserFavorites from '@/Components/User/UserFavorites.vue'
 import BookingDetailsModal from '@/Components/User/BookingDetailsModal.vue'
 import ModifyBookingModal from '@/Components/User/ModifyBookingModal.vue'
 import ReviewModal from '@/Components/User/ReviewModal.vue'
+import PaymentModal from '@/Components/User/PaymentModal.vue'
 import axios from 'axios'
 
 export default {
@@ -229,7 +238,8 @@ export default {
     UserFavorites,
     BookingDetailsModal,
     ModifyBookingModal,
-    ReviewModal
+    ReviewModal,
+    PaymentModal
   },
   setup() {
     const activeTab = ref('upcoming')
@@ -255,6 +265,7 @@ export default {
     const showBookingModal = ref(false)
     const showModifyModal = ref(false)
     const showReviewModal = ref(false)
+    const showPaymentModal = ref(false)
     const selectedBooking = ref(null)
     const selectedReview = ref(null)
 
@@ -353,6 +364,11 @@ export default {
         console.error('Error canceling booking:', error)
         alert('Error al cancelar la reserva')
       }
+    }
+
+    const handleCompletePayment = (booking) => {
+      selectedBooking.value = booking
+      showPaymentModal.value = true
     }
 
     const handleWriteReview = (booking) => {
@@ -463,6 +479,30 @@ export default {
       selectedReview.value = null
     }
 
+    const closePaymentModal = () => {
+      showPaymentModal.value = false
+      selectedBooking.value = null
+    }
+
+    const handlePaymentCompleted = async (paymentResult) => {
+      try {
+        // Call backend to confirm payment
+        await axios.post(`/api/payments/booking/${paymentResult.booking_id}/confirm`, {
+          method: paymentResult.method,
+          payment_data: paymentResult
+        })
+
+        // Refresh data
+        await fetchUpcomingBookings()
+        await fetchDashboardStats()
+        
+        alert('¡Pago completado exitosamente!')
+      } catch (error) {
+        console.error('Error confirming payment:', error)
+        alert('Error al confirmar el pago. Por favor contacta con soporte.')
+      }
+    }
+
     // Load data based on active tab
     const loadTabData = () => {
       switch (activeTab.value) {
@@ -504,6 +544,7 @@ export default {
     onMounted(() => {
       fetchDashboardStats()
       fetchUpcomingBookings() // Load default tab
+      fetchBookingHistory() // Always load history on mount
     })
 
     return {
@@ -521,12 +562,14 @@ export default {
       showBookingModal,
       showModifyModal,
       showReviewModal,
+      showPaymentModal,
       selectedBooking,
       selectedReview,
       hasNoTrips,
       handleViewBookingDetails,
       handleModifyBooking,
       handleCancelBooking,
+      handleCompletePayment,
       handleWriteReview,
       handleEditReview,
       handleDeleteReview,
@@ -534,10 +577,12 @@ export default {
       handleBookTour,
       handleSaveModification,
       handleSaveReview,
+      handlePaymentCompleted,
       loadMoreHistory,
       closeBookingModal,
       closeModifyModal,
       closeReviewModal,
+      closePaymentModal,
       loadTabData
     }
   }

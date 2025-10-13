@@ -26,23 +26,29 @@ class UserDashboardController extends Controller
         
         $stats = [
             'activeBookings' => $user->bookings()
-                ->whereIn('status', ['pending', 'confirmed', 'paid'])
+                ->whereIn('status', ['pending', 'confirmed'])
                 ->count(),
             
             'completedBookings' => $user->bookings()
                 ->where('status', 'completed')
                 ->count(),
             
-            'reviewsCount' => $user->reviews()
-                ->where('status', 'approved')
-                ->count(),
+            'reviewsCount' => 0, // $user->reviews()->where('status', 'approved')->count(),
             
             'visitedDestinations' => $user->bookings()
                 ->where('status', 'completed')
                 ->with('tourSchedule.tour.attractions')
                 ->get()
                 ->flatMap(function ($booking) {
-                    return $booking->tourSchedule->tour->attractions->pluck('id');
+                    // Handle planning bookings (without tour schedule)
+                    if (!$booking->tourSchedule) {
+                        // Extract attraction ID from planning notes
+                        preg_match('/Atracción ID: (\\d+)/', $booking->notes ?? '', $matches);
+                        return $matches[1] ? collect([$matches[1]]) : collect();
+                    }
+                    
+                    // Handle regular tour bookings
+                    return optional($booking->tourSchedule->tour)->attractions->pluck('id') ?? collect();
                 })
                 ->unique()
                 ->count()
@@ -65,7 +71,7 @@ class UserDashboardController extends Controller
                     'tourSchedule.tour.attractions.department',
                     'tourSchedule.tour.attractions.media'
                 ])
-                ->whereIn('status', ['pending', 'confirmed', 'paid'])
+                ->whereIn('status', ['pending', 'confirmed'])
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -187,50 +193,106 @@ class UserDashboardController extends Controller
         $page = $request->get('page', 1);
         $perPage = 10;
         
-        $bookings = $user->bookings()
-            ->with([
-                'tourSchedule.tour.attractions.department',
-                'tourSchedule.tour.attractions.media',
-                'reviews'
-            ])
-            ->whereIn('status', ['completed', 'cancelled', 'refunded', 'no_show'])
-            ->orderBy('created_at', 'desc')
-            ->skip(($page - 1) * $perPage)
-            ->take($perPage)
-            ->get()
-            ->map(function ($booking) {
-                $schedule = $booking->tourSchedule;
-                $tour = $schedule->tour;
-                $attraction = $tour->attractions->first(); // Get the first attraction
-                $review = $booking->reviews->first();
-                
-                return [
-                    'id' => $booking->id,
-                    'booking_number' => $booking->booking_number,
-                    'status' => $booking->status,
-                    'status_name' => $booking->status_name,
-                    'payment_status' => $booking->payment_status,
-                    'payment_status_name' => $booking->payment_status_name,
-                    'tour_name' => $tour->name,
-                    'tour_date' => $schedule->date,
-                    'tour_time' => $schedule->start_time->format('H:i'),
-                    'participants_count' => $booking->participants_count,
-                    'total_amount' => $booking->total_amount,
-                    'currency' => $booking->currency,
-                    'attraction_name' => $attraction?->name,
-                    'attraction_slug' => $attraction?->slug,
-                    'department_name' => $attraction?->department?->name,
-                    'has_review' => $review !== null,
-                    'review_rating' => $review?->rating,
-                    'cancellation_reason' => $booking->cancellation_reason,
-                    'refund_amount' => $booking->refund_amount,
-                    'created_at' => $booking->created_at,
-                    'cancelled_at' => $booking->cancelled_at,
-                    'refunded_at' => $booking->refunded_at,
-                ];
-            });
-        
-        return response()->json(['data' => $bookings]);
+        try {
+            $bookings = $user->bookings()
+                ->with([
+                    'tourSchedule.tour.attractions.department',
+                    'tourSchedule.tour.attractions.media',
+                    'reviews'
+                ])
+                ->whereIn('status', ['completed', 'cancelled', 'refunded', 'no_show'])
+                ->orderBy('created_at', 'desc')  // Usar created_at que sí existe
+                ->skip(($page - 1) * $perPage)
+                ->take($perPage)
+                ->get()
+                ->map(function ($booking) {
+                    // Handle bookings without tour schedule (planning bookings)
+                    if (!$booking->tourSchedule) {
+                        // Extract planning data from notes if available
+                        preg_match('/Atracción ID: (\\d+)/', $booking->notes ?? '', $attractionMatches);
+                        preg_match('/Fecha: ([\\d-]+)/', $booking->notes ?? '', $dateMatches);
+                        
+                        $attractionId = $attractionMatches[1] ?? null;
+                        $visitDate = $dateMatches[1] ?? null;
+                        
+                        $attractionName = 'Atracción planificada';
+                        $departmentName = null;
+                        if ($attractionId) {
+                            $attraction = \App\Models\Attraction::with('department')->find($attractionId);
+                            if ($attraction) {
+                                $attractionName = $attraction->name;
+                                $departmentName = $attraction->department?->name;
+                            }
+                        }
+                        
+                        return [
+                            'id' => $booking->id,
+                            'booking_number' => $booking->booking_number,
+                            'status' => $booking->status,
+                            'status_name' => $booking->status_name,
+                            'payment_status' => $booking->payment_status,
+                            'payment_status_name' => $booking->payment_status_name,
+                            'tour_name' => 'Visita planificada',
+                            'tour_date' => $visitDate, // Fecha extraída de notes
+                            'tour_time' => null,
+                            'participants_count' => $booking->participants_count,
+                            'total_amount' => $booking->total_amount,
+                            'currency' => $booking->currency,
+                            'attraction_name' => $attractionName,
+                            'attraction_slug' => null,
+                            'department_name' => $departmentName,
+                            'has_review' => false,
+                            'review_rating' => null,
+                            'cancellation_reason' => $booking->cancellation_reason,
+                            'refund_amount' => $booking->refund_amount,
+                            'created_at' => $booking->created_at,
+                            'cancelled_at' => $booking->cancelled_at,
+                            'refunded_at' => $booking->refunded_at,
+                        ];
+                    }
+
+                    $schedule = $booking->tourSchedule;
+                    $tour = $schedule->tour;
+                    $attraction = $tour->attractions->first(); // Get the first attraction
+                    $review = $booking->reviews->first();
+                    
+                    return [
+                        'id' => $booking->id,
+                        'booking_number' => $booking->booking_number,
+                        'status' => $booking->status,
+                        'status_name' => $booking->status_name,
+                        'payment_status' => $booking->payment_status,
+                        'payment_status_name' => $booking->payment_status_name,
+                        'tour_name' => $tour->name,
+                        'tour_date' => $schedule->date,
+                        'tour_time' => $schedule->start_time->format('H:i'),
+                        'participants_count' => $booking->participants_count,
+                        'total_amount' => $booking->total_amount,
+                        'currency' => $booking->currency,
+                        'attraction_name' => $attraction?->name,
+                        'attraction_slug' => $attraction?->slug,
+                        'department_name' => $attraction?->department?->name,
+                        'has_review' => $review !== null,
+                        'review_rating' => $review?->rating,
+                        'cancellation_reason' => $booking->cancellation_reason,
+                        'refund_amount' => $booking->refund_amount,
+                        'created_at' => $booking->created_at,
+                        'cancelled_at' => $booking->cancelled_at,
+                        'refunded_at' => $booking->refunded_at,
+                    ];
+                });
+            
+            return response()->json(['data' => $bookings]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error in bookingHistory: ' . $e->getMessage());
+            
+            return response()->json([
+                'data' => [],
+                'error' => 'Error loading booking history',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     /**

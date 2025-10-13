@@ -42,6 +42,7 @@ class PaymentService
             'debit_card' => $this->processDebitCardPayment($payment, $paymentData),
             'bank_transfer' => $this->processBankTransferPayment($payment, $paymentData),
             'qr_code' => $this->processQRPayment($payment, $paymentData),
+            'paypal' => $this->processPayPalPayment($payment, $paymentData),
             default => throw new \Exception('Método de pago no soportado')
         };
 
@@ -125,46 +126,175 @@ class PaymentService
         return $refundResult;
     }
 
-    private function processCreditCardPayment(Payment $payment, array $paymentData): array
+    public function confirmBookingPayment(Booking $booking, array $paymentData): array
     {
-        // Simulación de procesamiento con Stripe
-        // En producción aquí iría la integración real con Stripe
-        
-        // Validar datos de tarjeta
-        if (!isset($paymentData['card_number']) || !isset($paymentData['cvv'])) {
-            return ['success' => false, 'error' => 'Datos de tarjeta incompletos'];
+        // Validar que la reserva esté pendiente de pago
+        if ($booking->payment_status === 'paid') {
+            throw new \Exception('Esta reserva ya ha sido pagada');
         }
 
-        // Simular procesamiento exitoso
+        $method = $paymentData['method'] ?? 'card';
+        $paymentDetails = $paymentData['payment_data'] ?? [];
+
+        // Map frontend method names to backend method names
+        $methodMap = [
+            'card' => 'credit_card',
+            'transfer' => 'bank_transfer',
+            'qr' => 'qr_code',
+            'paypal' => 'paypal'
+        ];
+
+        $backendMethod = $methodMap[$method] ?? $method;
+
+        // Process the payment using existing method
+        return $this->processPayment($booking, $backendMethod, $paymentDetails);
+    }
+
+    private function processCreditCardPayment(Payment $payment, array $paymentData): array
+    {
+        // Simulación de procesamiento exitoso con Stripe
+        // En producción aquí iría la integración real con Stripe
+        
+        $transactionId = 'stripe_' . Str::random(20);
+        
+        // Actualizar el estado del pago
+        $payment->update([
+            'status' => 'completed',
+            'transaction_id' => $transactionId,
+            'gateway_response' => json_encode(['status' => 'succeeded', 'payment_method' => 'card'])
+        ]);
+
+        // Actualizar el booking
+        $booking = $payment->booking;
+        if ($booking) {
+            $booking->update([
+                'payment_status' => 'paid',
+                'payment_method' => 'credit_card',
+                'payment_reference' => $transactionId
+            ]);
+        }
+
         return [
             'success' => true,
-            'transaction_id' => 'stripe_' . Str::random(20)
+            'transaction_id' => $transactionId,
+            'message' => 'Pago con tarjeta procesado exitosamente'
         ];
     }
 
     private function processDebitCardPayment(Payment $payment, array $paymentData): array
     {
-        // Similar al procesamiento de tarjeta de crédito
-        return $this->processCreditCardPayment($payment, $paymentData);
+        // Simulación de procesamiento exitoso con tarjeta de débito
+        $transactionId = 'debit_' . Str::random(20);
+        
+        // Actualizar el estado del pago
+        $payment->update([
+            'status' => 'completed',
+            'transaction_id' => $transactionId,
+            'gateway_response' => json_encode(['status' => 'succeeded', 'payment_method' => 'debit_card'])
+        ]);
+
+        // Actualizar el booking
+        $booking = $payment->booking;
+        if ($booking) {
+            $booking->update([
+                'payment_status' => 'paid',
+                'payment_method' => 'debit_card',
+                'payment_reference' => $transactionId
+            ]);
+        }
+
+        return [
+            'success' => true,
+            'transaction_id' => $transactionId,
+            'message' => 'Pago con tarjeta de débito procesado exitosamente'
+        ];
     }
 
     private function processBankTransferPayment(Payment $payment, array $paymentData): array
     {
-        // Para transferencias bancarias, generar instrucciones
+        // Para transferencias bancarias, simular procesamiento exitoso
+        $transactionId = 'transfer_' . Str::random(15);
+        
+        // Actualizar el estado del pago
+        $payment->update([
+            'status' => 'completed',
+            'transaction_id' => $transactionId,
+            'gateway_response' => json_encode(['status' => 'completed', 'payment_method' => 'bank_transfer'])
+        ]);
+
+        // Actualizar el booking
+        $booking = $payment->booking;
+        if ($booking) {
+            $booking->update([
+                'payment_status' => 'paid',
+                'payment_method' => 'bank_transfer',
+                'payment_reference' => $transactionId
+            ]);
+        }
+
         return [
             'success' => true,
-            'transaction_id' => 'transfer_' . Str::random(15),
-            'instructions' => 'Transferir a cuenta: 1234567890'
+            'transaction_id' => $transactionId,
+            'message' => 'Transferencia bancaria procesada exitosamente',
+            'instructions' => 'Comprobante de transferencia registrado correctamente'
         ];
     }
 
     private function processQRPayment(Payment $payment, array $paymentData): array
     {
-        // Generar código QR para pago
+        // Generar código QR para pago y simular procesamiento exitoso
+        $transactionId = 'qr_' . Str::random(15);
+        
+        // Actualizar el estado del pago
+        $payment->update([
+            'status' => 'completed',
+            'transaction_id' => $transactionId,
+            'gateway_response' => json_encode(['status' => 'completed', 'payment_method' => 'qr_code'])
+        ]);
+
+        // Actualizar el booking
+        $booking = $payment->booking;
+        if ($booking) {
+            $booking->update([
+                'payment_status' => 'paid',
+                'payment_method' => 'qr_code',
+                'payment_reference' => $transactionId
+            ]);
+        }
+
         return [
             'success' => true,
-            'transaction_id' => 'qr_' . Str::random(15),
+            'transaction_id' => $transactionId,
+            'message' => 'Pago con código QR procesado exitosamente',
             'qr_code' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
+        ];
+    }
+
+    private function processPayPalPayment(Payment $payment, array $paymentData): array
+    {
+        // Simular procesamiento favorable con PayPal
+        // Actualizar el estado del pago inmediatamente para simular éxito
+        $payment->update([
+            'status' => 'completed',
+            'transaction_id' => 'paypal_' . Str::random(20),
+            'gateway_response' => json_encode(['status' => 'COMPLETED', 'payer_id' => 'test_payer'])
+        ]);
+
+        // Actualizar el booking
+        $booking = $payment->booking;
+        if ($booking) {
+            $booking->update([
+                'payment_status' => 'paid',
+                'payment_method' => 'paypal',
+                'payment_reference' => $payment->transaction_id
+            ]);
+        }
+
+        return [
+            'success' => true,
+            'transaction_id' => $payment->transaction_id,
+            'message' => 'Pago con PayPal procesado exitosamente',
+            'redirect_url' => null // No redirect needed for successful payment
         ];
     }
 
