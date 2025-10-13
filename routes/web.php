@@ -185,7 +185,10 @@ Route::middleware(['auth'])->group(function () {
     })->name('user.dashboard');
     
     Route::get('/perfil', function () {
-        return \Inertia\Inertia::render('User/Profile');
+        $user = Auth::user();
+        return \Inertia\Inertia::render('User/Profile', [
+            'user' => $user
+        ]);
     })->name('user.profile');
     
     // Planning route using web authentication

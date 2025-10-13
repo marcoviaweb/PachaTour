@@ -12,54 +12,29 @@
       <!-- Profile Form -->
       <div class="bg-white rounded-lg shadow">
         <div class="p-6">
+          <!-- Información del usuario autenticado (solo lectura) -->
+          <div class="mb-6 bg-green-50 rounded-lg p-4 border border-green-200">
+            <h4 class="text-sm font-medium text-green-800 mb-3">Información de contacto</h4>
+            <div class="space-y-2">
+              <div class="flex items-center">
+                <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                <span class="text-sm text-gray-700">Nombre:</span>
+                <span class="text-sm font-medium text-gray-900 ml-2">{{ form.name }} {{ form.last_name }}</span>
+              </div>
+              <div class="flex items-center">
+                <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v10a2 2 0 002 2z"></path>
+                </svg>
+                <span class="text-sm text-gray-700">Email:</span>
+                <span class="text-sm font-medium text-gray-900 ml-2">{{ form.email }}</span>
+              </div>
+            </div>
+          </div>
+
           <form @submit.prevent="updateProfile">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <!-- Name -->
-              <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                  Nombre *
-                </label>
-                <input
-                  id="name"
-                  v-model="form.name"
-                  type="text"
-                  required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  :class="{ 'border-red-500': errors.name }"
-                />
-                <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name }}</p>
-              </div>
-
-              <!-- Last Name -->
-              <div>
-                <label for="last_name" class="block text-sm font-medium text-gray-700 mb-2">
-                  Apellido
-                </label>
-                <input
-                  id="last_name"
-                  v-model="form.last_name"
-                  type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  :class="{ 'border-red-500': errors.last_name }"
-                />
-                <p v-if="errors.last_name" class="mt-1 text-sm text-red-600">{{ errors.last_name }}</p>
-              </div>
-
-              <!-- Email -->
-              <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                  Correo Electrónico *
-                </label>
-                <input
-                  id="email"
-                  v-model="form.email"
-                  type="email"
-                  required
-                  readonly
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
-                />
-                <p class="mt-1 text-xs text-gray-500">El correo electrónico no se puede cambiar</p>
-              </div>
 
               <!-- Phone -->
               <div>
@@ -320,7 +295,13 @@ export default {
     Head,
     AppLayout
   },
-  setup() {
+  props: {
+    user: {
+      type: Object,
+      required: true
+    }
+  },
+  setup(props) {
     const processing = ref(false)
     const processingPassword = ref(false)
     const errors = ref({})
@@ -350,7 +331,15 @@ export default {
 
     const loadProfile = async () => {
       try {
-        const response = await axios.get('/api/test/user/profile')
+        // First load from props
+        Object.keys(form).forEach(key => {
+          if (props.user[key] !== undefined) {
+            form[key] = props.user[key]
+          }
+        })
+
+        // Then fetch full profile data from API
+        const response = await axios.get('/api/user/profile')
         const user = response.data.user
         
         Object.keys(form).forEach(key => {
@@ -360,6 +349,12 @@ export default {
         })
       } catch (error) {
         console.error('Error loading profile:', error)
+        // If API fails, still use props data
+        Object.keys(form).forEach(key => {
+          if (props.user[key] !== undefined) {
+            form[key] = props.user[key]
+          }
+        })
       }
     }
 
@@ -368,7 +363,7 @@ export default {
       errors.value = {}
 
       try {
-        await axios.put('/api/test/user/profile', form)
+        await axios.put('/api/user/profile', form)
         alert('Perfil actualizado exitosamente')
       } catch (error) {
         if (error.response?.data?.errors) {
@@ -386,7 +381,7 @@ export default {
       passwordErrors.value = {}
 
       try {
-        await axios.post('/api/test/user/change-password', passwordForm)
+        await axios.post('/api/user/change-password', passwordForm)
         alert('Contraseña cambiada exitosamente')
         
         // Clear form

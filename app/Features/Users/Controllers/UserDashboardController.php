@@ -492,8 +492,6 @@ class UserDashboardController extends Controller
         $user = Auth::user();
         
         $request->validate([
-            'name' => 'required|string|max:100',
-            'last_name' => 'nullable|string|max:100',
             'phone' => 'nullable|string|max:20',
             'birth_date' => 'nullable|date|before:today',
             'gender' => 'nullable|in:male,female,other,prefer_not_to_say',
@@ -508,10 +506,10 @@ class UserDashboardController extends Controller
             'marketing_emails' => 'boolean',
         ]);
         
+        // Exclude name, last_name and email from updates (read-only fields)
         $user->update($request->only([
-            'name', 'last_name', 'phone', 'birth_date', 'gender',
-            'nationality', 'country', 'city', 'preferred_language',
-            'interests', 'bio', 'newsletter_subscription', 'marketing_emails'
+            'phone', 'birth_date', 'gender', 'nationality', 'country', 'city', 
+            'preferred_language', 'interests', 'bio', 'newsletter_subscription', 'marketing_emails'
         ]));
         
         return response()->json([
