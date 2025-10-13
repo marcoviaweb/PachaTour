@@ -468,7 +468,7 @@ class UserDashboardController extends Controller
                 'last_name' => $user->last_name,
                 'email' => $user->email,
                 'phone' => $user->phone,
-                'birth_date' => $user->birth_date,
+                'birth_date' => $user->birth_date ? $user->birth_date->format('Y-m-d') : null,
                 'gender' => $user->gender,
                 'nationality' => $user->nationality,
                 'country' => $user->country,
@@ -477,8 +477,8 @@ class UserDashboardController extends Controller
                 'interests' => $user->interests,
                 'bio' => $user->bio,
                 'avatar_path' => $user->avatar_path,
-                'newsletter_subscription' => $user->newsletter_subscription,
-                'marketing_emails' => $user->marketing_emails,
+                'newsletter_subscription' => (bool) $user->newsletter_subscription,
+                'marketing_emails' => (bool) $user->marketing_emails,
                 'created_at' => $user->created_at,
             ]
         ]);
@@ -502,8 +502,8 @@ class UserDashboardController extends Controller
             'interests' => 'nullable|array',
             'interests.*' => 'string|max:50',
             'bio' => 'nullable|string|max:500',
-            'newsletter_subscription' => 'boolean',
-            'marketing_emails' => 'boolean',
+            'newsletter_subscription' => 'nullable|boolean',
+            'marketing_emails' => 'nullable|boolean',
         ]);
         
         // Exclude name, last_name and email from updates (read-only fields)

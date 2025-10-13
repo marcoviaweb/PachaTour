@@ -333,8 +333,27 @@ export default {
       try {
         // First load from props
         Object.keys(form).forEach(key => {
-          if (props.user[key] !== undefined) {
-            form[key] = props.user[key]
+          if (props.user[key] !== undefined && props.user[key] !== null) {
+            // Handle boolean fields explicitly
+            if (key === 'newsletter_subscription' || key === 'marketing_emails') {
+              form[key] = Boolean(props.user[key])
+            } else if (key === 'birth_date') {
+              // Format date for HTML date input (YYYY-MM-DD)
+              const dateValue = props.user[key]
+              if (dateValue) {
+                // Convert timestamp/datetime to YYYY-MM-DD format
+                const date = new Date(dateValue)
+                if (!isNaN(date.getTime())) {
+                  form[key] = date.toISOString().split('T')[0]
+                } else {
+                  form[key] = ''
+                }
+              } else {
+                form[key] = ''
+              }
+            } else {
+              form[key] = props.user[key]
+            }
           }
         })
 
@@ -343,16 +362,54 @@ export default {
         const user = response.data.user
         
         Object.keys(form).forEach(key => {
-          if (user[key] !== undefined) {
-            form[key] = user[key]
+          if (user[key] !== undefined && user[key] !== null) {
+            // Handle boolean fields explicitly
+            if (key === 'newsletter_subscription' || key === 'marketing_emails') {
+              form[key] = Boolean(user[key])
+            } else if (key === 'birth_date') {
+              // Format date for HTML date input (YYYY-MM-DD)
+              const dateValue = user[key]
+              if (dateValue) {
+                // Convert timestamp/datetime to YYYY-MM-DD format
+                const date = new Date(dateValue)
+                if (!isNaN(date.getTime())) {
+                  form[key] = date.toISOString().split('T')[0]
+                } else {
+                  form[key] = ''
+                }
+              } else {
+                form[key] = ''
+              }
+            } else {
+              form[key] = user[key]
+            }
           }
         })
       } catch (error) {
         console.error('Error loading profile:', error)
         // If API fails, still use props data
         Object.keys(form).forEach(key => {
-          if (props.user[key] !== undefined) {
-            form[key] = props.user[key]
+          if (props.user[key] !== undefined && props.user[key] !== null) {
+            // Handle boolean fields explicitly
+            if (key === 'newsletter_subscription' || key === 'marketing_emails') {
+              form[key] = Boolean(props.user[key])
+            } else if (key === 'birth_date') {
+              // Format date for HTML date input (YYYY-MM-DD)
+              const dateValue = props.user[key]
+              if (dateValue) {
+                // Convert timestamp/datetime to YYYY-MM-DD format
+                const date = new Date(dateValue)
+                if (!isNaN(date.getTime())) {
+                  form[key] = date.toISOString().split('T')[0]
+                } else {
+                  form[key] = ''
+                }
+              } else {
+                form[key] = ''
+              }
+            } else {
+              form[key] = props.user[key]
+            }
           }
         })
       }
@@ -363,9 +420,10 @@ export default {
       errors.value = {}
 
       try {
-        await axios.put('/api/user/profile', form)
+        const response = await axios.put('/api/user/profile', form)
         alert('Perfil actualizado exitosamente')
       } catch (error) {
+        console.error('Error al actualizar perfil:', error)
         if (error.response?.data?.errors) {
           errors.value = error.response.data.errors
         } else {
