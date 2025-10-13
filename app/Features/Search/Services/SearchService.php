@@ -61,6 +61,7 @@ class SearchService
             ->map(function ($attraction) {
                 return [
                     'id' => $attraction->id,
+                    'slug' => $attraction->slug,
                     'name' => $attraction->name,
                     'type' => 'attraction',
                     'department' => $attraction->department->name ?? null

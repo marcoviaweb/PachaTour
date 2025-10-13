@@ -110,8 +110,13 @@ export default {
 
     const handleSuggestionSelect = (suggestion) => {
       if (suggestion.type === 'attraction') {
-        // Navigate to attraction detail
-        router.visit(`/attractions/${suggestion.id}`)
+        // Navigate to attraction detail usando slug
+        if (suggestion.slug) {
+          router.visit(`/atractivos/${suggestion.slug}`)
+        } else {
+          console.error('Sugerencia sin slug:', suggestion)
+          router.visit('/atractivos')
+        }
       } else if (suggestion.type === 'department') {
         // Set department filter and search
         filters.value.department_id = suggestion.id
@@ -132,7 +137,14 @@ export default {
     }
 
     const handleAttractionSelect = (attraction) => {
-      router.visit(`/attractions/${attraction.slug || attraction.id}`)
+      // Asegurar que siempre usamos el slug, no el ID
+      if (attraction.slug) {
+        router.visit(`/atractivos/${attraction.slug}`)
+      } else {
+        console.error('Atractivo sin slug:', attraction)
+        // Como fallback, redirigir a la lista de atractivos
+        router.visit('/atractivos')
+      }
     }
 
     const handlePageChange = (page) => {
