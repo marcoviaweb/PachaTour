@@ -273,4 +273,74 @@ class TourController extends Controller
             'data' => $newTour
         ], 201);
     }
+
+    /**
+     * Display a listing of active tours for public viewing
+     */
+    public function publicIndex(Request $request): JsonResponse
+    {
+        try {
+            $query = Tour::with([
+                'attractions:id,name,slug',
+                'schedules' => function($q) {
+                    $q->where('date', '>=', now()->toDateString())
+                      ->where('status', 'available')
+                      ->orderBy('date')
+                      ->orderBy('start_time');
+                }
+            ])->where('is_active', true);
+
+            // Apply filters
+            if ($request->filled('search')) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+            }
+
+            if ($request->filled('type')) {
+                $query->where('type', $request->type);
+            }
+
+            if ($request->filled('difficulty')) {
+                $query->where('difficulty_level', $request->difficulty);
+            }
+
+            if ($request->filled('min_price')) {
+                $query->where('price_per_person', '>=', $request->min_price);
+            }
+
+            if ($request->filled('max_price')) {
+                $query->where('price_per_person', '<=', $request->max_price);
+            }
+
+            if ($request->filled('duration_days')) {
+                $query->where('duration_days', $request->duration_days);
+            }
+
+            if ($request->filled('featured')) {
+                $query->where('is_featured', true);
+            }
+
+            // Apply sorting
+            $sortBy = $request->get('sort_by', 'created_at');
+            $sortDirection = $request->get('sort_direction', 'desc');
+            
+            $allowedSorts = ['name', 'price_per_person', 'rating', 'created_at', 'bookings_count'];
+            if (in_array($sortBy, $allowedSorts)) {
+                $query->orderBy($sortBy, $sortDirection);
+            }
+
+            $perPage = min($request->get('per_page', 12), 24);
+            $tours = $query->paginate($perPage);
+
+            return response()->json([
+                'success' => true,
+                'data' => $tours
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading tours: ' . $e->getMessage(),
+                'data' => []
+            ], 500);
+        }
+    }
 }

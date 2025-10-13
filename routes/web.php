@@ -178,6 +178,43 @@ Route::get('/atractivos/{slug}', function ($slug) {
     }
 })->name('attractions.show');
 
+// Tour routes
+Route::get('/tours', function () {
+    return \Inertia\Inertia::render('Tours/Index');
+})->name('tours.index');
+
+Route::get('/tours/{slug}', function ($slug) {
+    try {
+        $tour = \App\Models\Tour::where('slug', $slug)
+            ->with([
+                'attractions' => function ($query) {
+                    $query->with(['department', 'media'])
+                        ->orderBy('pivot.visit_order');
+                },
+                'schedules' => function ($query) {
+                    $query->upcoming()->available();
+                },
+                'media' => function ($query) {
+                    $query->orderBy('sort_order')->orderBy('created_at');
+                },
+                'reviews' => function ($query) {
+                    $query->with('user:id,name')
+                        ->where('status', 'approved')
+                        ->latest()
+                        ->limit(10);
+                }
+            ])
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        return \Inertia\Inertia::render('Tours/Show', [
+            'tour' => $tour
+        ]);
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        abort(404, 'Tour no encontrado');
+    }
+})->name('tours.show');
+
 // User Dashboard route (requires authentication)
 Route::middleware(['auth'])->group(function () {
     Route::get('/mis-viajes', function () {

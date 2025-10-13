@@ -296,8 +296,10 @@ use App\Features\Tours\Controllers\TourScheduleController;
 use App\Features\Tours\Controllers\AvailabilityController;
 use App\Features\Tours\Controllers\BookingController;
 
-// Public tour availability routes
+// Public tour routes
 Route::prefix('tours')->group(function () {
+    Route::get('/', [TourController::class, 'publicIndex']);
+    Route::get('/{tour}', [TourController::class, 'show']);
     Route::get('/{tour}/availability/date', [AvailabilityController::class, 'checkDate']);
     Route::get('/{tour}/availability/range', [AvailabilityController::class, 'checkRange']);
     Route::get('/{tour}/availability/next', [AvailabilityController::class, 'nextAvailable']);
