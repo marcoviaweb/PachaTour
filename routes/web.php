@@ -260,18 +260,6 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/reviews/{review}', [\App\Features\Reviews\Controllers\ReviewController::class, 'update'])->name('reviews.update');
         Route::delete('/reviews/{review}', [\App\Features\Reviews\Controllers\ReviewController::class, 'destroy'])->name('reviews.delete');
     });
-    
-    // Ruta de diagnóstico autenticada
-    Route::get('/debug-auth-protected', function () {
-        return response()->json([
-            'authenticated' => auth()->check(),
-            'user_id' => auth()->id(),
-            'user_name' => auth()->user()?->name,
-            'session_id' => session()->getId(),
-            'csrf_token' => csrf_token(),
-            'middleware_group' => 'auth - protected route'
-        ]);
-    });
 });
 
 // Temporary test route for profile (without authentication)
@@ -407,17 +395,3 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 require __DIR__.'/auth.php';
 
-// Debug route for admin dashboard
-Route::get('/debug-admin', function () {
-    try {
-        $controller = new \App\Features\Admin\Controllers\AdminController();
-        return $controller->dashboard();
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString()
-        ], 500);
-    }
-});

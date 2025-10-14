@@ -75,55 +75,7 @@ Route::get('/reviews-temp', function () {
     }
 });
 
-// Test específico para reseñas SIN AUTH - para debug
-Route::get('/debug-reviews-no-auth', function () {
-    Log::info('=== ENDPOINT SIN AUTH EJECUTÁNDOSE ===');
-    
-    $reviews = \App\Features\Reviews\Models\Review::where('user_id', 24)->get();
-    Log::info('Reviews encontradas sin auth:', ['count' => $reviews->count()]);
-    
-    return response()->json([
-        'message' => 'Endpoint sin auth funcionando',
-        'reviews_count' => $reviews->count(),
-        'first_review' => $reviews->first() ? [
-            'id' => $reviews->first()->id,
-            'title' => $reviews->first()->title,
-            'rating' => $reviews->first()->rating
-        ] : null
-    ]);
-});
-
-// Test específico para reseñas SIN AUTH
-Route::get('/test-reviews-simple', function () {
-    return response()->json([
-        'message' => 'Endpoint simple funcionando',
-        'reviews_in_db' => \App\Features\Reviews\Models\Review::where('user_id', 24)->count(),
-        'test_data' => [
-            ['id' => 1, 'title' => 'Test Review 1', 'rating' => 5],
-            ['id' => 2, 'title' => 'Test Review 2', 'rating' => 4]
-        ]
-    ]);
-});
-
-// Test específico para reseñas
-Route::middleware(['auth:web'])->get('/test-reviews', function () {
-    $user = auth('web')->user();
-    $reviews = \App\Features\Reviews\Models\Review::where('user_id', $user->id)->get();
-    
-    return response()->json([
-        'user_id' => $user->id,
-        'reviews_count' => $reviews->count(),
-        'reviews' => $reviews->map(function($review) {
-            return [
-                'id' => $review->id,
-                'rating' => $review->rating,
-                'title' => $review->title,
-                'status' => $review->status,
-                'created_at' => $review->created_at
-            ];
-        })
-    ]);
-});
+// Production API routes start here
 
 // Temporary test routes for profile (without authentication)
 Route::prefix('test')->group(function () {
