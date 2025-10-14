@@ -3,7 +3,7 @@
 namespace App\Features\Tours\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Tour;
+use App\Features\Tours\Models\Tour;
 use App\Features\Tours\Requests\StoreTourRequest;
 use App\Features\Tours\Requests\UpdateTourRequest;
 use Illuminate\Http\JsonResponse;

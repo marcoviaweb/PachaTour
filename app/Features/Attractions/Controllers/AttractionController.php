@@ -3,7 +3,7 @@
 namespace App\Features\Attractions\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Attraction;
+use App\Features\Attractions\Models\Attraction;
 use App\Features\Attractions\Requests\StoreAttractionRequest;
 use App\Features\Attractions\Requests\UpdateAttractionRequest;
 use Illuminate\Http\Request;

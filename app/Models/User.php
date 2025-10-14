@@ -100,7 +100,7 @@ class User extends Authenticatable
      */
     public function bookings()
     {
-        return $this->hasMany(Booking::class);
+        return $this->hasMany(\App\Features\Tours\Models\Booking::class);
     }
 
     /**
@@ -108,7 +108,7 @@ class User extends Authenticatable
      */
     public function reviews()
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(\App\Features\Reviews\Models\Review::class);
     }
 
     /**
@@ -116,7 +116,7 @@ class User extends Authenticatable
      */
     public function moderatedReviews()
     {
-        return $this->hasMany(Review::class, 'moderated_by');
+        return $this->hasMany(\App\Features\Reviews\Models\Review::class, 'moderated_by');
     }
 
     /**
@@ -124,7 +124,7 @@ class User extends Authenticatable
      */
     public function activities()
     {
-        return $this->hasMany(UserActivity::class);
+        return $this->hasMany(\App\Features\Users\Models\UserActivity::class);
     }
 
     // Scopes

@@ -4,7 +4,7 @@ namespace App\Features\Attractions\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Media;
-use App\Models\Attraction;
+use App\Features\Attractions\Models\Attraction;
 use App\Features\Attractions\Requests\StoreMediaRequest;
 use App\Features\Attractions\Requests\UpdateMediaRequest;
 use Illuminate\Http\Request;

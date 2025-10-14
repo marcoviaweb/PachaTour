@@ -3,8 +3,8 @@
 namespace App\Features\Reviews\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Review;
-use App\Models\Attraction;
+use App\Features\Reviews\Models\Review;
+use App\Features\Attractions\Models\Attraction;
 use App\Features\Reviews\Requests\StoreReviewRequest;
 use App\Features\Reviews\Requests\UpdateReviewRequest;
 use Illuminate\Http\Request;
@@ -128,7 +128,7 @@ class ReviewController extends Controller
 
             // Mark as verified if user has a confirmed booking
             if ($request->booking_id) {
-                $booking = \App\Models\Booking::find($request->booking_id);
+                $booking = \App\Features\Tours\Models\Booking::find($request->booking_id);
                 if ($booking && $booking->user_id === Auth::id() && $booking->status === 'completed') {
                     $review->verify();
                 }

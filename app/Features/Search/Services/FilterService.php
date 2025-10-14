@@ -2,7 +2,7 @@
 
 namespace App\Features\Search\Services;
 
-use App\Models\Attraction;
+use App\Features\Attractions\Models\Attraction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 

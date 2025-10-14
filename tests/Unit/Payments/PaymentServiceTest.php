@@ -3,7 +3,7 @@
 namespace Tests\Unit\Payments;
 
 use Tests\TestCase;
-use App\Models\Booking;
+use App\Features\Tours\Models\Booking;
 use App\Models\Tour;
 use App\Models\Attraction;
 use App\Models\Department;

@@ -5,9 +5,9 @@ namespace Tests\Feature\Tours;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
-use App\Models\Tour;
-use App\Models\TourSchedule;
-use App\Models\Booking;
+use App\Features\Tours\Models\Tour;
+use App\Features\Tours\Models\TourSchedule;
+use App\Features\Tours\Models\Booking;
 use Laravel\Sanctum\Sanctum;
 
 class BookingFlowTest extends TestCase

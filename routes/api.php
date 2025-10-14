@@ -42,7 +42,7 @@ Route::get('/test', function () {
 Route::get('/reviews-temp', function () {
     try {
         $userId = 24; // Juan Pérez
-        $reviews = \App\Models\Review::where('user_id', $userId)
+        $reviews = \App\Features\Reviews\Models\Review::where('user_id', $userId)
             ->with(['reviewable'])
             ->orderBy('created_at', 'desc')
             ->get();
@@ -79,7 +79,7 @@ Route::get('/reviews-temp', function () {
 Route::get('/debug-reviews-no-auth', function () {
     Log::info('=== ENDPOINT SIN AUTH EJECUTÁNDOSE ===');
     
-    $reviews = \App\Models\Review::where('user_id', 24)->get();
+    $reviews = \App\Features\Reviews\Models\Review::where('user_id', 24)->get();
     Log::info('Reviews encontradas sin auth:', ['count' => $reviews->count()]);
     
     return response()->json([
@@ -97,7 +97,7 @@ Route::get('/debug-reviews-no-auth', function () {
 Route::get('/test-reviews-simple', function () {
     return response()->json([
         'message' => 'Endpoint simple funcionando',
-        'reviews_in_db' => \App\Models\Review::where('user_id', 24)->count(),
+        'reviews_in_db' => \App\Features\Reviews\Models\Review::where('user_id', 24)->count(),
         'test_data' => [
             ['id' => 1, 'title' => 'Test Review 1', 'rating' => 5],
             ['id' => 2, 'title' => 'Test Review 2', 'rating' => 4]
@@ -108,7 +108,7 @@ Route::get('/test-reviews-simple', function () {
 // Test específico para reseñas
 Route::middleware(['auth:web'])->get('/test-reviews', function () {
     $user = auth('web')->user();
-    $reviews = \App\Models\Review::where('user_id', $user->id)->get();
+    $reviews = \App\Features\Reviews\Models\Review::where('user_id', $user->id)->get();
     
     return response()->json([
         'user_id' => $user->id,
@@ -504,28 +504,4 @@ Route::get('/user-favorites-temp', function () {
     return response()->json(['data' => []]);
 });
 
-// User dashboard routes (Authenticated users)
-Route::middleware(['auth:web'])->group(function () {
-    Route::prefix('user')->name('user.')->group(function () {
-        // Dashboard stats and data
-        Route::get('/dashboard/stats', [UserDashboardController::class, 'dashboardStats'])->name('dashboard.stats');
-        Route::get('/bookings/upcoming', [UserDashboardController::class, 'upcomingBookings'])->name('bookings.upcoming');
-        Route::get('/bookings/history', [UserDashboardController::class, 'bookingHistory'])->name('bookings.history');
-        Route::get('/reviews', [UserDashboardController::class, 'userReviews'])->name('reviews');
-        Route::get('/favorites', [UserDashboardController::class, 'userFavorites'])->name('favorites');
-        
-        // Favorites management
-        Route::post('/favorites', [UserDashboardController::class, 'addFavorite'])->name('favorites.add');
-        Route::delete('/favorites/{favorite}', [UserDashboardController::class, 'removeFavorite'])->name('favorites.remove');
-        
-        // Profile management
-        Route::get('/profile', [UserDashboardController::class, 'profile'])->name('profile');
-        Route::put('/profile', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
-        Route::post('/change-password', [UserDashboardController::class, 'changePassword'])->name('password.change');
-        
-        // Reviews management for web authenticated users
-        Route::post('/reviews', [\App\Features\Reviews\Controllers\ReviewController::class, 'store'])->name('reviews.store');
-        Route::put('/reviews/{review}', [\App\Features\Reviews\Controllers\ReviewController::class, 'update'])->name('reviews.update');
-        Route::delete('/reviews/{review}', [\App\Features\Reviews\Controllers\ReviewController::class, 'destroy'])->name('reviews.delete');
-    });
-});
+// User dashboard routes moved to web.php for proper session handling

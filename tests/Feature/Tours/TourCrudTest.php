@@ -3,7 +3,7 @@
 namespace Tests\Feature\Tours;
 
 use Tests\TestCase;
-use App\Models\Tour;
+use App\Features\Tours\Models\Tour;
 use App\Models\User;
 use App\Models\Attraction;
 use App\Models\Department;

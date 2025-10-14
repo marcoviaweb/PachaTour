@@ -3,7 +3,7 @@
 namespace App\Features\Departments\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Department;
+use App\Features\Departments\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 

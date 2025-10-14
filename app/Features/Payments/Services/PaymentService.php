@@ -2,7 +2,7 @@
 
 namespace App\Features\Payments\Services;
 
-use App\Models\Booking;
+use App\Features\Tours\Models\Booking;
 use App\Features\Payments\Models\Payment;
 use App\Features\Payments\Services\CommissionService;
 use Illuminate\Support\Str;

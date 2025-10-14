@@ -6,7 +6,7 @@ use Tests\TestCase;
 use App\Features\Search\Services\FilterService;
 use App\Models\Attraction;
 use App\Models\Department;
-use App\Models\Tour;
+use App\Features\Tours\Models\Tour;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class FilterServiceTest extends TestCase

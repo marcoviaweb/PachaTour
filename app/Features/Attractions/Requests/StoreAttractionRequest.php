@@ -3,7 +3,7 @@
 namespace App\Features\Attractions\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\Attraction;
+use App\Features\Attractions\Models\Attraction;
 
 class StoreAttractionRequest extends FormRequest
 {

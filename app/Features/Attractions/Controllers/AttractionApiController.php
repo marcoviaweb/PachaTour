@@ -3,8 +3,8 @@
 namespace App\Features\Attractions\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Attraction;
-use App\Models\Department;
+use App\Features\Attractions\Models\Attraction;
+use App\Features\Departments\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -114,7 +114,7 @@ class AttractionApiController extends Controller
                 'tours' => function ($query) {
                     $query->where('is_active', true)
                         ->with(['schedules' => function ($scheduleQuery) {
-                            $scheduleQuery->orderBy('day_of_week')->orderBy('start_time');
+                            $scheduleQuery->orderBy('date')->orderBy('start_time');
                         }]);
                 },
                 'approvedReviews' => function ($query) {

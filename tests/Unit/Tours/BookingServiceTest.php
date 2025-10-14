@@ -6,11 +6,11 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Features\Tours\Services\BookingService;
 use App\Models\User;
-use App\Models\Tour;
-use App\Models\TourSchedule;
-use App\Models\Booking;
-use App\Models\Attraction;
-use App\Models\Department;
+use App\Features\Tours\Models\Tour;
+use App\Features\Tours\Models\TourSchedule;
+use App\Features\Tours\Models\Booking;
+use App\Features\Attractions\Models\Attraction;
+use App\Features\Departments\Models\Department;
 use Carbon\Carbon;
 
 class BookingServiceTest extends TestCase

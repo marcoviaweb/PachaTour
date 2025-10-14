@@ -34,7 +34,7 @@ Route::get('/test', function () {
 // Test departments API
 Route::get('/test-departments', function () {
     try {
-        $departments = \App\Models\Department::all();
+        $departments = \App\Features\Departments\Models\Department::all();
         return response()->json([
             'status' => 'success',
             'count' => $departments->count(),
@@ -53,8 +53,8 @@ Route::get('/test-departments', function () {
 // Test attractions API
 Route::get('/test-attractions', function () {
     try {
-        $attractions = \App\Models\Attraction::all();
-        $featured = \App\Models\Attraction::where('is_featured', true)->count();
+        $attractions = \App\Features\Attractions\Models\Attraction::all();
+        $featured = \App\Features\Attractions\Models\Attraction::where('is_featured', true)->count();
         return response()->json([
             'status' => 'success',
             'total_count' => $attractions->count(),
@@ -75,7 +75,7 @@ Route::get('/test-attractions', function () {
 Route::get('/test-reviews-direct', function () {
     try {
         $userId = 24; // Juan Pérez
-        $reviews = \App\Models\Review::where('user_id', $userId)
+        $reviews = \App\Features\Reviews\Models\Review::where('user_id', $userId)
             ->with(['reviewable'])
             ->orderBy('created_at', 'desc')
             ->get();
@@ -151,7 +151,7 @@ Route::get('/atractivos', function () {
 
 Route::get('/atractivos/{slug}', function ($slug) {
     try {
-        $attraction = \App\Models\Attraction::where('slug', $slug)
+        $attraction = \App\Features\Attractions\Models\Attraction::where('slug', $slug)
             ->with([
                 'department',
                 'media' => function ($query) {
@@ -185,7 +185,7 @@ Route::get('/tours', function () {
 
 Route::get('/tours/{slug}', function ($slug) {
     try {
-        $tour = \App\Models\Tour::where('slug', $slug)
+        $tour = \App\Features\Tours\Models\Tour::where('slug', $slug)
             ->with([
                 'attractions' => function ($query) {
                     $query->with(['department', 'media'])
@@ -236,6 +236,42 @@ Route::middleware(['auth'])->group(function () {
         
         return $controller->storePlanning($request);
     })->name('planning.store');
+    
+    // User dashboard AJAX routes (moved from api.php for proper session handling)
+    Route::prefix('api/user')->name('api.user.')->group(function () {
+        // Dashboard stats and data
+        Route::get('/dashboard/stats', [\App\Features\Users\Controllers\UserDashboardController::class, 'dashboardStats'])->name('dashboard.stats');
+        Route::get('/bookings/upcoming', [\App\Features\Users\Controllers\UserDashboardController::class, 'upcomingBookings'])->name('bookings.upcoming');
+        Route::get('/bookings/history', [\App\Features\Users\Controllers\UserDashboardController::class, 'bookingHistory'])->name('bookings.history');
+        Route::get('/reviews', [\App\Features\Users\Controllers\UserDashboardController::class, 'userReviews'])->name('reviews');
+        Route::get('/favorites', [\App\Features\Users\Controllers\UserDashboardController::class, 'userFavorites'])->name('favorites');
+        
+        // Favorites management
+        Route::post('/favorites', [\App\Features\Users\Controllers\UserDashboardController::class, 'addFavorite'])->name('favorites.add');
+        Route::delete('/favorites/{favorite}', [\App\Features\Users\Controllers\UserDashboardController::class, 'removeFavorite'])->name('favorites.remove');
+        
+        // Profile management
+        Route::get('/profile', [\App\Features\Users\Controllers\UserDashboardController::class, 'profile'])->name('profile');
+        Route::put('/profile', [\App\Features\Users\Controllers\UserDashboardController::class, 'updateProfile'])->name('profile.update');
+        Route::post('/change-password', [\App\Features\Users\Controllers\UserDashboardController::class, 'changePassword'])->name('password.change');
+        
+        // Reviews management for web authenticated users
+        Route::post('/reviews', [\App\Features\Reviews\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+        Route::put('/reviews/{review}', [\App\Features\Reviews\Controllers\ReviewController::class, 'update'])->name('reviews.update');
+        Route::delete('/reviews/{review}', [\App\Features\Reviews\Controllers\ReviewController::class, 'destroy'])->name('reviews.delete');
+    });
+    
+    // Ruta de diagnóstico autenticada
+    Route::get('/debug-auth-protected', function () {
+        return response()->json([
+            'authenticated' => auth()->check(),
+            'user_id' => auth()->id(),
+            'user_name' => auth()->user()?->name,
+            'session_id' => session()->getId(),
+            'csrf_token' => csrf_token(),
+            'middleware_group' => 'auth - protected route'
+        ]);
+    });
 });
 
 // Temporary test route for profile (without authentication)
@@ -291,12 +327,12 @@ Route::get('/test-models', function () {
         
         // Probar creación de modelos
         $models = [
-            'Department' => new App\Models\Department(),
-            'Attraction' => new App\Models\Attraction(),
-            'Tour' => new App\Models\Tour(),
-            'TourSchedule' => new App\Models\TourSchedule(),
-            'Booking' => new App\Models\Booking(),
-            'Review' => new App\Models\Review(),
+            'Department' => new App\Features\Departments\Models\Department(),
+            'Attraction' => new App\Features\Attractions\Models\Attraction(),
+            'Tour' => new App\Features\Tours\Models\Tour(),
+            'TourSchedule' => new App\Features\Tours\Models\TourSchedule(),
+            'Booking' => new App\Features\Tours\Models\Booking(),
+            'Review' => new App\Features\Reviews\Models\Review(),
             'Media' => new App\Models\Media(),
             'User' => new App\Models\User(),
         ];
@@ -310,12 +346,12 @@ Route::get('/test-models', function () {
         $results['relations']['Department->attractions'] = method_exists($department, 'attractions');
         $results['relations']['Department->media'] = method_exists($department, 'media');
         
-        $attraction = new App\Models\Attraction();
+        $attraction = new App\Features\Attractions\Models\Attraction();
         $results['relations']['Attraction->department'] = method_exists($attraction, 'department');
         $results['relations']['Attraction->tours'] = method_exists($attraction, 'tours');
         $results['relations']['Attraction->reviews'] = method_exists($attraction, 'reviews');
         
-        $tour = new App\Models\Tour();
+        $tour = new App\Features\Tours\Models\Tour();
         $results['relations']['Tour->schedules'] = method_exists($tour, 'schedules');
         $results['relations']['Tour->attractions'] = method_exists($tour, 'attractions');
         $results['relations']['Tour->bookings'] = method_exists($tour, 'bookings');
@@ -326,10 +362,10 @@ Route::get('/test-models', function () {
         
         // Probar constantes
         $results['constants'] = [
-            'attraction_types' => count(App\Models\Attraction::TYPES),
-            'tour_types' => count(App\Models\Tour::TYPES),
-            'booking_statuses' => count(App\Models\Booking::STATUSES),
-            'review_statuses' => count(App\Models\Review::STATUSES),
+            'attraction_types' => count(App\Features\Attractions\Models\Attraction::TYPES),
+            'tour_types' => count(App\Features\Tours\Models\Tour::TYPES),
+            'booking_statuses' => count(App\Features\Tours\Models\Booking::STATUSES),
+            'review_statuses' => count(App\Features\Reviews\Models\Review::STATUSES),
             'media_types' => count(App\Models\Media::TYPES),
         ];
         

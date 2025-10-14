@@ -4,8 +4,8 @@ namespace App\Features\Reviews\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Models\Review;
-use App\Models\Booking;
+use App\Features\Reviews\Models\Review;
+use App\Features\Tours\Models\Booking;
 
 class StoreReviewRequest extends FormRequest
 {
@@ -26,7 +26,7 @@ class StoreReviewRequest extends FormRequest
             'reviewable_type' => [
                 'required',
                 'string',
-                Rule::in(['App\Models\Attraction', 'App\Models\Tour'])
+                Rule::in(['App\Features\Attractions\Models\Attraction', 'App\Features\Tours\Models\Tour'])
             ],
             'reviewable_id' => [
                 'required',
@@ -152,9 +152,9 @@ class StoreReviewRequest extends FormRequest
         $type = $this->input('reviewable_type');
         
         switch ($type) {
-            case 'App\Models\Attraction':
+            case 'App\Features\Attractions\Models\Attraction':
                 return 'attractions';
-            case 'App\Models\Tour':
+            case 'App\Features\Tours\Models\Tour':
                 return 'tours';
             default:
                 return 'attractions'; // fallback

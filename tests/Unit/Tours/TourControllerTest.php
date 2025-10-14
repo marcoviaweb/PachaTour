@@ -3,9 +3,9 @@
 namespace Tests\Unit\Tours;
 
 use Tests\TestCase;
-use App\Models\Tour;
+use App\Features\Tours\Models\Tour;
 use App\Models\User;
-use App\Models\Attraction;
+use App\Features\Attractions\Models\Attraction;
 use App\Features\Tours\Controllers\TourController;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;

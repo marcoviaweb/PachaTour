@@ -4,7 +4,7 @@ namespace App\Features\Reviews\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Models\Review;
+use App\Features\Reviews\Models\Review;
 
 class UpdateReviewRequest extends FormRequest
 {

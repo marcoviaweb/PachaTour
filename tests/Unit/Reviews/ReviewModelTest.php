@@ -6,7 +6,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Review;
 use App\Models\Attraction;
-use App\Models\Booking;
+use App\Features\Tours\Models\Booking;
 use App\Models\Department;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -48,10 +48,10 @@ class ReviewModelTest extends TestCase
     public function test_review_belongs_to_booking()
     {
         // Create necessary dependencies for booking
-        $tour = \App\Models\Tour::factory()->create();
+        $tour = \App\Features\Tours\Models\Tour::factory()->create();
         $tour->attractions()->attach($this->attraction->id); // Many-to-many relationship
         
-        $schedule = \App\Models\TourSchedule::factory()->create(['tour_id' => $tour->id]);
+        $schedule = \App\Features\Tours\Models\TourSchedule::factory()->create(['tour_id' => $tour->id]);
         
         $booking = Booking::factory()->create([
             'user_id' => $this->user->id,

@@ -3,10 +3,10 @@
 namespace App\Features\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Attraction;
-use App\Models\Booking;
+use App\Features\Attractions\Models\Attraction;
+use App\Features\Tours\Models\Booking;
 use App\Models\User;
-use App\Models\Review;
+use App\Features\Reviews\Models\Review;
 use App\Features\Payments\Models\Commission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

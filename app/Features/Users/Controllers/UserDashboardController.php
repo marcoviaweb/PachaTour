@@ -4,10 +4,10 @@ namespace App\Features\Users\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Booking;
-use App\Models\Review;
-use App\Models\Attraction;
-use App\Models\UserFavorite;
+use App\Features\Tours\Models\Booking;
+use App\Features\Reviews\Models\Review;
+use App\Features\Attractions\Models\Attraction;
+use App\Features\Users\Models\UserFavorite;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +34,7 @@ class UserDashboardController extends Controller
                 ->where('status', 'completed')
                 ->count(),
             
-            'reviewsCount' => $user->reviews()->where('status', 'approved')->count(),
+            'reviewsCount' => $user->reviews()->count(),
             
             'visitedDestinations' => $user->bookings()
                 ->where('status', 'completed')
@@ -90,7 +90,7 @@ class UserDashboardController extends Controller
                     $attractionName = 'Atracción planificada';
                     $departmentName = null;
                     if ($attractionId) {
-                        $attraction = \App\Models\Attraction::with('department')->find($attractionId);
+                        $attraction = \App\Features\Attractions\Models\Attraction::with('department')->find($attractionId);
                         if ($attraction) {
                             $attractionName = $attraction->name;
                             $departmentName = $attraction->department?->name;
@@ -175,7 +175,7 @@ class UserDashboardController extends Controller
             
         } catch (\Exception $e) {
             // Log the error and return empty array to prevent 500
-            \Log::error('Error in upcomingBookings: ' . $e->getMessage());
+            Log::error('Error in upcomingBookings: ' . $e->getMessage());
             
             return response()->json([
                 'data' => [],
@@ -219,7 +219,7 @@ class UserDashboardController extends Controller
                         $attractionName = 'Atracción planificada';
                         $departmentName = null;
                         if ($attractionId) {
-                            $attraction = \App\Models\Attraction::with('department')->find($attractionId);
+                            $attraction = \App\Features\Attractions\Models\Attraction::with('department')->find($attractionId);
                             if ($attraction) {
                                 $attractionName = $attraction->name;
                                 $departmentName = $attraction->department?->name;
@@ -288,7 +288,7 @@ class UserDashboardController extends Controller
             return response()->json(['data' => $bookings]);
             
         } catch (\Exception $e) {
-            \Log::error('Error in bookingHistory: ' . $e->getMessage());
+            Log::error('Error in bookingHistory: ' . $e->getMessage());
             
             return response()->json([
                 'data' => [],
@@ -306,7 +306,7 @@ class UserDashboardController extends Controller
         $user = Auth::user();
         
         try {
-            $reviews = Review::where('user_id', $user->id)
+            $reviews = \App\Features\Reviews\Models\Review::where('user_id', $user->id)
                 ->with(['reviewable'])
                 ->orderBy('created_at', 'desc')
                 ->get();

@@ -2,7 +2,7 @@
 
 namespace App\Features\Admin\Services;
 
-use App\Models\UserActivity;
+use App\Features\Users\Models\UserActivity;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 

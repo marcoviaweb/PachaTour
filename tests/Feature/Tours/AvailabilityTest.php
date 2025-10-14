@@ -3,8 +3,8 @@
 namespace Tests\Feature\Tours;
 
 use Tests\TestCase;
-use App\Models\Tour;
-use App\Models\TourSchedule;
+use App\Features\Tours\Models\Tour;
+use App\Features\Tours\Models\TourSchedule;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;

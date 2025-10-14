@@ -5,8 +5,8 @@ namespace App\Features\Payments\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Booking;
-use App\Models\Tour;
+use App\Features\Tours\Models\Booking;
+use App\Features\Tours\Models\Tour;
 
 class Commission extends Model
 {
