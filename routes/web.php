@@ -402,6 +402,11 @@ Route::get('/test-models', function () {
 
 // Admin routes
 Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Redirect /admin to /admin/dashboard
+    Route::get('/', function () {
+        return redirect('/admin/dashboard');
+    });
+    
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/overview', [AdminController::class, 'overview'])->name('overview');
     
