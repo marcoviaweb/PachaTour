@@ -4,6 +4,7 @@ namespace App\Features\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Features\Attractions\Models\Attraction;
+use App\Features\Departments\Models\Department;
 use App\Features\Tours\Models\Booking;
 use App\Models\User;
 use App\Features\Reviews\Models\Review;
@@ -12,12 +13,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use Inertia\Inertia;
 
 class AdminController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'role:admin']);
+        $this->middleware(['admin']);
     }
 
     /**
@@ -29,7 +31,11 @@ class AdminController extends Controller
         $recentActivity = $this->getRecentActivity();
         $chartData = $this->getChartData();
 
-        return view('admin.dashboard', compact('metrics', 'recentActivity', 'chartData'));
+        return Inertia::render('Admin/Dashboard', [
+            'metrics' => $metrics,
+            'recentActivity' => $recentActivity,
+            'chartData' => $chartData
+        ]);
     }
 
     /**
@@ -38,25 +44,19 @@ class AdminController extends Controller
     private function getDashboardMetrics()
     {
         $currentMonth = Carbon::now()->startOfMonth();
-        $previousMonth = Carbon::now()->subMonth()->startOfMonth();
 
         return [
             'total_users' => User::count(),
             'new_users_this_month' => User::where('created_at', '>=', $currentMonth)->count(),
             'total_attractions' => Attraction::where('is_active', true)->count(),
-            'total_bookings' => Booking::count(),
-            'bookings_this_month' => Booking::where('created_at', '>=', $currentMonth)->count(),
-            'confirmed_bookings' => Booking::where('status', 'confirmed')->count(),
-            'pending_bookings' => Booking::where('status', 'pending')->count(),
-            'total_revenue' => Booking::where('payment_status', 'paid')->sum('total_amount'),
-            'revenue_this_month' => Booking::where('payment_status', 'paid')
-                ->where('created_at', '>=', $currentMonth)
-                ->sum('total_amount'),
-            'total_commissions' => Commission::sum('amount'),
-            'commissions_this_month' => Commission::where('created_at', '>=', $currentMonth)->sum('amount'),
-            'pending_reviews' => Review::where('status', 'pending')->count(),
-            'approved_reviews' => Review::where('status', 'approved')->count(),
-            'average_rating' => Review::where('status', 'approved')->avg('rating'),
+            'total_bookings' => 0, // Placeholder until booking system is implemented
+            'bookings_this_month' => 0, // Placeholder
+            'confirmed_bookings' => 0, // Placeholder  
+            'pending_bookings' => 0, // Placeholder
+            'total_departments' => Department::count(),
+            'active_departments' => Department::where('is_active', true)->count(),
+            'inactive_departments' => Department::where('is_active', false)->count(),
+            'inactive_attractions' => Attraction::where('is_active', false)->count(),
         ];
     }
 
@@ -66,22 +66,17 @@ class AdminController extends Controller
     private function getRecentActivity()
     {
         return [
-            'recent_bookings' => Booking::with(['user', 'tourSchedule'])
-                ->latest()
+            'recent_bookings' => [], // Placeholder until booking system is implemented
+            'recent_reviews' => [], // Placeholder until review system is implemented
+            'recent_users' => User::latest()
                 ->limit(5)
-                ->get(),
-            'recent_users' => User::where('role', '!=', 'admin')
-                ->latest()
-                ->limit(5)
-                ->get(),
-            'recent_reviews' => Review::with(['user', 'reviewable'])
-                ->where('status', 'pending')
-                ->latest()
-                ->limit(5)
-                ->get(),
+                ->get(['id', 'name', 'email', 'created_at']),
         ];
     }
 
+    /**
+     * Get chart data for dashboard visualizations
+     */
     /**
      * Get chart data for dashboard visualizations
      */
@@ -89,53 +84,41 @@ class AdminController extends Controller
     {
         $last30Days = Carbon::now()->subDays(30);
         
-        // Daily bookings for the last 30 days
-        $dailyBookings = Booking::select(
-                DB::raw('date(created_at) as date'),
-                DB::raw('COUNT(*) as count'),
-                DB::raw('SUM(total_amount) as revenue')
+        // Daily user registrations for the last 30 days
+        $dailyUsers = User::select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('COUNT(*) as count')
             )
             ->where('created_at', '>=', $last30Days)
-            ->groupBy('date')
+            ->groupBy(DB::raw('DATE(created_at)'))
             ->orderBy('date')
             ->get();
 
-        // Monthly revenue for the last 12 months
-        $monthlyRevenue = Booking::select(
-                DB::raw('strftime("%Y", created_at) as year'),
-                DB::raw('strftime("%m", created_at) as month'),
-                DB::raw('SUM(total_amount) as revenue'),
-                DB::raw('COUNT(*) as bookings')
+        // Monthly user growth for the last 12 months
+        $monthlyUsers = User::select(
+                DB::raw('EXTRACT(YEAR FROM created_at) as year'),
+                DB::raw('EXTRACT(MONTH FROM created_at) as month'),
+                DB::raw('COUNT(*) as count')
             )
-            ->where('payment_status', 'paid')
             ->where('created_at', '>=', Carbon::now()->subMonths(12))
-            ->groupBy('year', 'month')
+            ->groupBy(DB::raw('EXTRACT(YEAR FROM created_at)'), DB::raw('EXTRACT(MONTH FROM created_at)'))
             ->orderBy('year')
             ->orderBy('month')
             ->get();
 
-        // Bookings by status
-        $bookingsByStatus = Booking::select('status', DB::raw('COUNT(*) as count'))
-            ->groupBy('status')
-            ->get();
-
-        // Top attractions by bookings - using reviews as proxy for popularity
-        $topAttractions = Attraction::withCount('reviews')
-            ->orderByDesc('reviews_count')
-            ->limit(10)
-            ->get()
-            ->map(function ($attraction) {
-                return [
-                    'name' => $attraction->name,
-                    'booking_count' => $attraction->reviews_count // Using reviews as proxy for popularity
-                ];
-            });
+        // Departments vs Attractions comparison
+        $departmentStats = [
+            'total_departments' => Department::count(),
+            'active_departments' => Department::where('is_active', true)->count(),
+            'total_attractions' => Attraction::count(),
+            'active_attractions' => Attraction::where('is_active', true)->count(),
+        ];
 
         return [
-            'daily_bookings' => $dailyBookings,
-            'monthly_revenue' => $monthlyRevenue,
-            'bookings_by_status' => $bookingsByStatus,
-            'top_attractions' => $topAttractions,
+            'daily_users' => $dailyUsers,
+            'monthly_users' => $monthlyUsers,
+            'department_stats' => $departmentStats,
+            'total_revenue' => 0, // Placeholder until booking system is implemented
         ];
     }
 

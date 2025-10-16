@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Features\Admin\Controllers\AdminController;
 use App\Features\Admin\Controllers\ReportController;
+use App\Features\Admin\Controllers\DepartmentController as AdminDepartmentController;
 use Inertia\Inertia;
 
 /*
@@ -16,6 +17,16 @@ use Inertia\Inertia;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+// CSRF Token refresh route
+Route::get('/sanctum/csrf-cookie', function () {
+    return response()->json(['message' => 'CSRF cookie set']);
+});
+
+// Get current CSRF token
+Route::get('/csrf-token', function () {
+    return response()->json(['token' => csrf_token()]);
+});
 
 // Ruta súper simple para verificar que Laravel funciona
 Route::get('/simple', function () {
@@ -390,9 +401,15 @@ Route::get('/test-models', function () {
 });
 
 // Admin routes
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/overview', [AdminController::class, 'overview'])->name('overview');
+    
+    // Department management routes
+    Route::resource('departments', AdminDepartmentController::class);
+    Route::patch('/departments/{department}/toggle-status', [AdminDepartmentController::class, 'toggleStatus'])->name('departments.toggle-status');
+    Route::patch('/departments/{department}/coordinates', [AdminDepartmentController::class, 'updateCoordinates'])->name('departments.update-coordinates');
+    Route::post('/departments/bulk-action', [AdminDepartmentController::class, 'bulkAction'])->name('departments.bulk-action');
     
     // Report routes
     Route::prefix('reports')->name('reports.')->group(function () {
@@ -406,4 +423,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 require __DIR__.'/auth.php';
+
+// Temporal test route for admin dashboard  
+Route::get('/test-admin', function () {
+    return response()->json([
+        'message' => 'Admin dashboard test working!',
+        'user' => auth()->user(),
+        'departments' => \App\Features\Departments\Models\Department::count(),
+        'attractions' => \App\Features\Attractions\Models\Attraction::count(),
+        'users' => \App\Models\User::count(),
+    ]);
+})->middleware(['auth']);
 

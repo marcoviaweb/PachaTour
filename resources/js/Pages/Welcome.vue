@@ -2,6 +2,14 @@
   <Head title="Pacha Tour - Descubre Bolivia" />
   
   <AppLayout>
+    <!-- Flash Messages -->
+    <div v-if="$page.props.flash?.error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 m-4 rounded">
+      {{ $page.props.flash.error }}
+    </div>
+    <div v-if="$page.props.flash?.info" class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 m-4 rounded">
+      {{ $page.props.flash.info }}
+    </div>
+    
     <!-- Hero Section -->
     <section class="relative bg-gradient-to-r from-green-600 to-blue-600 text-white">
       <div class="absolute inset-0 bg-black opacity-40"></div>

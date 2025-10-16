@@ -279,9 +279,12 @@ export default {
     }
 
     const logout = () => {
-      router.post('/logout')
-      closeUserMenu()
-      closeMobileMenu()
+      router.post('/logout', {}, {
+        onFinish: () => {
+          closeUserMenu()
+          closeMobileMenu()
+        }
+      })
     }
 
     const isCurrentRoute = (path) => {

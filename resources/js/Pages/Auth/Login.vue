@@ -69,6 +69,14 @@
           </div>
         </div>
 
+        <!-- Flash Messages -->
+        <div v-if="$page.props.flash?.info" class="mb-4 p-3 bg-blue-100 border border-blue-400 text-blue-700 rounded">
+          {{ $page.props.flash.info }}
+        </div>
+        <div v-if="$page.props.flash?.error" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {{ $page.props.flash.error }}
+        </div>
+
         <div v-if="errors.email || errors.password" class="text-red-600 text-sm">
           <p v-if="errors.email">{{ errors.email }}</p>
           <p v-if="errors.password">{{ errors.password }}</p>

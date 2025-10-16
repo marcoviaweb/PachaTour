@@ -117,8 +117,10 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
+        // Obtener el usuario autenticado
+        $user = Auth::user();
+
         if ($request->expectsJson()) {
-            $user = Auth::user();
             $token = $user->createToken('auth_token')->plainTextToken;
             
             return response()->json([
@@ -132,6 +134,11 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
             ]);
+        }
+
+        // Redirección basada en el rol del usuario - funciona para Inertia y requests normales
+        if ($user->role === 'admin') {
+            return redirect('/admin/dashboard');
         }
 
         return redirect('/');
@@ -150,9 +157,18 @@ class AuthController extends Controller
             ]);
         }
 
+        // Obtener el rol del usuario antes de cerrar sesión
+        $userRole = $request->user() ? $request->user()->role : null;
+        $wasAdmin = $userRole === 'admin';
+
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        // Redirección basada en el rol del usuario que hizo logout
+        if ($wasAdmin) {
+            return redirect('/login')->with('info', 'Sesión de administrador cerrada. Puede iniciar sesión nuevamente.');
+        }
 
         return redirect('/');
     }

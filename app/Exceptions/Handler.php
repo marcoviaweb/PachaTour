@@ -3,7 +3,9 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Session\TokenMismatchException;
 use Throwable;
+use Inertia\Inertia;
 
 class Handler extends ExceptionHandler
 {
@@ -25,6 +27,20 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+        
+        // Handle CSRF Token Mismatch
+        $this->renderable(function (TokenMismatchException $e, $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'CSRF token mismatch. Please refresh and try again.',
+                    'error' => 'csrf_token_mismatch'
+                ], 419);
+            }
+            
+            return back()->withErrors([
+                'csrf' => 'La sesión ha expirado. Por favor, intenta de nuevo.'
+            ]);
         });
     }
 }
