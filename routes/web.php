@@ -168,11 +168,22 @@ Route::get('/atractivos/{slug}', function ($slug) {
             ])
             ->firstOrFail();
 
+        // Get nearby attractions (same department, exclude current)
+        $nearbyAttractions = \App\Features\Attractions\Models\Attraction::where('department_id', $attraction->department_id)
+            ->where('id', '!=', $attraction->id)
+            ->where('is_active', true)
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->with('department')
+            ->limit(5)
+            ->get();
+
         // Increment visit count
         $attraction->increment('visits_count');
 
         return \Inertia\Inertia::render('Attractions/Show', [
-            'attraction' => $attraction
+            'attraction' => $attraction,
+            'nearbyAttractions' => $nearbyAttractions
         ]);
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
         abort(404, 'Atractivo no encontrado');

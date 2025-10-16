@@ -125,6 +125,28 @@
               </div>
             </div>
 
+            <!-- Mapa de ubicación y atractivos cercanos -->
+            <div v-if="attraction.latitude && attraction.longitude" class="bg-white rounded-lg shadow-md p-6">
+              <h2 class="text-2xl font-bold text-gray-900 mb-4">Ubicación y Atractivos Cercanos</h2>
+              <p class="text-gray-600 mb-4">
+                Explora la ubicación exacta de {{ attraction.name }} y descubre otros atractivos turísticos en la zona.
+              </p>
+              <AttractionMap 
+                :attraction="attraction"
+                :nearby-attractions="nearbyAttractions || []"
+              />
+              <div v-if="nearbyAttractions && nearbyAttractions.length > 0" class="mt-4">
+                <p class="text-sm text-gray-500">
+                  <span class="inline-block w-3 h-3 bg-red-600 rounded-full mr-2"></span>
+                  {{ attraction.name }} (ubicación principal)
+                </p>
+                <p class="text-sm text-gray-500 mt-1">
+                  <span class="inline-block w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
+                  Otros atractivos cercanos ({{ nearbyAttractions.length }})
+                </p>
+              </div>
+            </div>
+
             <!-- Reseñas -->
             <div v-if="attraction.reviews && attraction.reviews.length > 0" class="bg-white rounded-lg shadow-md p-6">
               <h2 class="text-2xl font-bold text-gray-900 mb-4">Reseñas</h2>
@@ -191,18 +213,35 @@
               </div>
             </div>
 
-            <!-- Mapa (placeholder) -->
+            <!-- Mapa de ubicación -->
             <div class="bg-white rounded-lg shadow-md p-6">
               <h3 class="text-lg font-semibold text-gray-900 mb-4">Ubicación</h3>
-              <div class="aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
+              <AttractionMap 
+                v-if="attraction.latitude && attraction.longitude"
+                :attraction="attraction"
+                :compact="true"
+              />
+              <div v-else class="aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
                 <div class="text-center text-gray-500">
                   <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                   </svg>
-                  <p class="text-sm">Mapa interactivo</p>
-                  <p class="text-xs">Próximamente</p>
+                  <p class="text-sm">Ubicación no disponible</p>
+                  <p class="text-xs">Coordenadas no registradas</p>
                 </div>
+              </div>
+              <!-- Información adicional para el mapa compacto -->
+              <div v-if="attraction.latitude && attraction.longitude" class="mt-3 text-sm text-gray-600">
+                <p class="flex items-center">
+                  <svg class="w-4 h-4 mr-1 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                  </svg>
+                  {{ attraction.name }}
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  📍 {{ parseFloat(attraction.latitude).toFixed(4) }}, {{ parseFloat(attraction.longitude).toFixed(4) }}
+                </p>
               </div>
             </div>
 
@@ -245,6 +284,7 @@ import { router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import BookingForm from '@/Components/BookingForm.vue'
 import AuthModal from '@/Components/AuthModal.vue'
+import AttractionMap from '@/Components/AttractionMap.vue'
 import { useAuth } from '@/composables/useAuth'
 import { useNotifications } from '@/composables/useNotifications'
 
@@ -253,6 +293,10 @@ const props = defineProps({
   attraction: {
     type: Object,
     required: true
+  },
+  nearbyAttractions: {
+    type: Array,
+    default: () => []
   }
 })
 
@@ -384,6 +428,7 @@ const handleBookingCreated = (booking) => {
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
