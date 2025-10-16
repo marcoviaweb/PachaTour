@@ -10,6 +10,7 @@ use App\Features\Reviews\Models\Review;
 use App\Features\Payments\Models\Commission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
 class AdminController extends Controller
@@ -183,8 +184,8 @@ class AdminController extends Controller
     private function checkCacheWorking()
     {
         try {
-            \Cache::put('health_check', 'ok', 60);
-            return \Cache::get('health_check') === 'ok';
+            Cache::put('health_check', 'ok', 60);
+            return Cache::get('health_check') === 'ok';
         } catch (\Exception $e) {
             return false;
         }

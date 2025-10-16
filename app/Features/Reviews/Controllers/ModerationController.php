@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\ReviewRejectedNotification;
 use App\Notifications\ReviewApprovedNotification;
@@ -442,7 +443,7 @@ class ModerationController extends Controller
     private function logModerationAction(string $action, Review $review, string $notes = null): void
     {
         // This could be expanded to use a dedicated audit log table
-        \Log::info('Review moderation action', [
+        Log::info('Review moderation action', [
             'action' => $action,
             'review_id' => $review->id,
             'moderator_id' => Auth::id(),
@@ -463,13 +464,13 @@ class ModerationController extends Controller
         try {
             $review->user->notify(new ReviewRejectedNotification($review, $reason));
             
-            \Log::info('Review rejection notification sent', [
+            Log::info('Review rejection notification sent', [
                 'user_id' => $review->user_id,
                 'review_id' => $review->id,
                 'reason' => $reason
             ]);
         } catch (\Exception $e) {
-            \Log::error('Failed to send review rejection notification', [
+            Log::error('Failed to send review rejection notification', [
                 'user_id' => $review->user_id,
                 'review_id' => $review->id,
                 'error' => $e->getMessage()
@@ -485,12 +486,12 @@ class ModerationController extends Controller
         try {
             $review->user->notify(new ReviewApprovedNotification($review));
             
-            \Log::info('Review approval notification sent', [
+            Log::info('Review approval notification sent', [
                 'user_id' => $review->user_id,
                 'review_id' => $review->id
             ]);
         } catch (\Exception $e) {
-            \Log::error('Failed to send review approval notification', [
+            Log::error('Failed to send review approval notification', [
                 'user_id' => $review->user_id,
                 'review_id' => $review->id,
                 'error' => $e->getMessage()

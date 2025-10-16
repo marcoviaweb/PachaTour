@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 
 class AuditMigration extends Command
 {
@@ -197,7 +198,7 @@ class AuditMigration extends Command
         $errors = 0;
         
         try {
-            $routes = \Route::getRoutes();
+            $routes = Route::getRoutes();
             $importantRoutes = [
                 'api/departments',
                 'api/attractions', 

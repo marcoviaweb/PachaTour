@@ -5,6 +5,7 @@ namespace App\Features\Search\Services;
 use App\Features\Attractions\Models\Attraction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class FilterService
 {
@@ -38,7 +39,7 @@ class FilterService
 
         // Filtro por rango de precios (buscar en tours relacionados)
         if (!empty($filters['min_price']) || !empty($filters['max_price'])) {
-            $tourIds = \DB::table('tours')
+            $tourIds = DB::table('tours')
                 ->where('is_active', true);
             
             if (!empty($filters['min_price'])) {
@@ -51,7 +52,7 @@ class FilterService
             $tourIds = $tourIds->pluck('id');
             
             if ($tourIds->isNotEmpty()) {
-                $attractionIds = \DB::table('tour_attraction')
+                $attractionIds = DB::table('tour_attraction')
                     ->whereIn('tour_id', $tourIds)
                     ->pluck('attraction_id');
                 
@@ -237,7 +238,7 @@ class FilterService
      */
     private function getPriceRange(): array
     {
-        $prices = \DB::table('tours')
+        $prices = DB::table('tours')
             ->join('tour_attraction', 'tours.id', '=', 'tour_attraction.tour_id')
             ->join('attractions', 'tour_attraction.attraction_id', '=', 'attractions.id')
             ->where('attractions.is_active', true)

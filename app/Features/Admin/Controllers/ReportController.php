@@ -248,7 +248,7 @@ class ReportController extends Controller
             ->get();
 
         // Add booking statistics
-        $attractions->each(function ($attraction) {
+        $attractions = $attractions->map(function ($attraction) {
             $bookingStats = Booking::whereHas('tourSchedule.tour.attractions', function ($q) use ($attraction) {
                 $q->where('attractions.id', $attraction->id);
             })->selectRaw('
@@ -257,11 +257,15 @@ class ReportController extends Controller
                 AVG(CASE WHEN payment_status = "paid" THEN total_amount ELSE NULL END) as average_booking_value
             ')->first();
 
-            $attraction->booking_stats = $bookingStats ?: (object)[
+            // Convert to array and add booking stats
+            $attractionArray = $attraction->toArray();
+            $attractionArray['booking_stats'] = $bookingStats ?: [
                 'total_bookings' => 0,
                 'total_revenue' => 0,
                 'average_booking_value' => 0
             ];
+            
+            return $attractionArray;
         });
 
         return response()->json([
