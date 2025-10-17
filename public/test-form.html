@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Form Values</title>
+</head>
+<body>
+    <h1>Test de Inicialización del Formulario</h1>
+    
+    <h2>Datos del departamento:</h2>
+    <pre id="department-data"></pre>
+    
+    <h2>Simulación del formulario:</h2>
+    <form>
+        <div>
+            <label>Nombre:</label>
+            <input type="text" id="name" />
+        </div>
+        <div>
+            <label>Capital:</label>
+            <input type="text" id="capital" />
+        </div>
+        <div>
+            <label>Descripción:</label>
+            <textarea id="description"></textarea>
+        </div>
+        <div>
+            <label>Latitud:</label>
+            <input type="number" id="latitude" />
+        </div>
+        <div>
+            <label>Longitud:</label>
+            <input type="number" id="longitude" />
+        </div>
+        <div>
+            <label>Población:</label>
+            <input type="number" id="population" />
+        </div>
+        <div>
+            <label>Activo:</label>
+            <input type="checkbox" id="is_active" />
+        </div>
+    </form>
+    
+    <script>
+        // Simular los datos que llegan del backend
+        const department = {
+            "id": 8,
+            "name": "Beni",
+            "slug": "beni",
+            "capital": "Trinidad",
+            "description": "Corazón de la Amazonía boliviana, hogar de una biodiversidad extraordinaria y culturas indígenas ancestrales. Beni ofrece experiencias únicas de ecoturismo, desde la observación de delfines rosados hasta la exploración de lomas precolombinas.",
+            "short_description": "Amazonía boliviana con biodiversidad extraordinaria y culturas ancestrales.",
+            "latitude": -14.8333,
+            "longitude": -64.9,
+            "image_path": null,
+            "population": 421196,
+            "area_km2": "213564.00",
+            "climate": "Tropical húmedo",
+            "languages": ["Español", "Moxeño", "Baure", "Canichana"],
+            "is_active": true,
+            "sort_order": 8
+        };
+        
+        console.log('Department data:', department);
+        document.getElementById('department-data').textContent = JSON.stringify(department, null, 2);
+        
+        // Simular la inicialización del formulario
+        const formData = {
+            name: department?.name || '',
+            capital: department?.capital || '',
+            description: department?.description || '',
+            latitude: department?.latitude ?? 0,
+            longitude: department?.longitude ?? 0,
+            population: department?.population ?? 0,
+            is_active: department?.is_active ?? true
+        };
+        
+        console.log('Form data:', formData);
+        
+        // Asignar valores a los inputs
+        document.getElementById('name').value = formData.name;
+        document.getElementById('capital').value = formData.capital;
+        document.getElementById('description').value = formData.description;
+        document.getElementById('latitude').value = formData.latitude;
+        document.getElementById('longitude').value = formData.longitude;
+        document.getElementById('population').value = formData.population;
+        document.getElementById('is_active').checked = formData.is_active;
+        
+        console.log('Values assigned to inputs');
+        
+        // Verificar que los inputs tienen los valores
+        setTimeout(() => {
+            console.log('Input values after assignment:');
+            console.log('name:', document.getElementById('name').value);
+            console.log('capital:', document.getElementById('capital').value);
+            console.log('description length:', document.getElementById('description').value.length);
+            console.log('latitude:', document.getElementById('latitude').value);
+            console.log('longitude:', document.getElementById('longitude').value);
+            console.log('population:', document.getElementById('population').value);
+            console.log('is_active:', document.getElementById('is_active').checked);
+        }, 100);
+    </script>
+</body>
+</html>

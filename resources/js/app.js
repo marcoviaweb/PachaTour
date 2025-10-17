@@ -4,18 +4,31 @@ import '../css/app.css';
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-// import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
+import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/index.esm';
+import { Ziggy } from './ziggy.js';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Pacha Tour';
+
+// Import the route function from Ziggy and router for CSRF handling
+import { route as ziggyRoute } from '../../vendor/tightenco/ziggy/dist/index.esm';
+import { router } from '@inertiajs/vue3';
+
+// Make route function globally available
+window.route = (name, params, absolute, config = Ziggy) => ziggyRoute(name, params, absolute, config);
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
-        return createApp({ render: () => h(App, props) })
+        const app = createApp({ render: () => h(App, props) })
             .use(plugin)
-            // .use(ZiggyVue)
-            .mount(el);
+            .use(ZiggyVue, Ziggy);
+        
+        // Make route function available as a global property
+        app.config.globalProperties.route = (name, params, absolute, config = Ziggy) => 
+            ziggyRoute(name, params, absolute, config);
+        
+        return app.mount(el);
     },
     progress: {
         color: '#4B5563',
@@ -23,7 +36,6 @@ createInertiaApp({
 });
 
 // Global Inertia CSRF error handler
-import { router } from '@inertiajs/vue3';
 
 // Override Inertia's default error handling for CSRF issues
 const originalPost = router.post;

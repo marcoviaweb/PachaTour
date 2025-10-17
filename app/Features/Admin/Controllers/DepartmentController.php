@@ -32,9 +32,9 @@ class DepartmentController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('capital', 'LIKE', "%{$search}%")
-                  ->orWhere('description', 'LIKE', "%{$search}%");
+                $q->where('name', 'ILIKE', "%{$search}%")
+                  ->orWhere('capital', 'ILIKE', "%{$search}%")
+                  ->orWhere('description', 'ILIKE', "%{$search}%");
             });
         }
 
@@ -347,6 +347,35 @@ class DepartmentController extends Controller
             'with_attractions' => Department::has('attractions')->count(),
             'without_attractions' => Department::doesntHave('attractions')->count(),
         ];
+    }
+
+    /**
+     * Remove a media file from department
+     */
+    public function removeMedia(Department $department, $mediaId)
+    {
+        try {
+            $media = $department->media()->findOrFail($mediaId);
+            
+            // Delete file from storage
+            if (Storage::disk('public')->exists($media->file_path)) {
+                Storage::disk('public')->delete($media->file_path);
+            }
+            
+            // Delete media record
+            $media->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Imagen eliminada correctamente'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar la imagen'
+            ], 500);
+        }
     }
 
     /**

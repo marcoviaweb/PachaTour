@@ -173,4 +173,20 @@ class Department extends Model
         }
         return null;
     }
+
+    /**
+     * Accessor para latitude - asegurar que se retorne como float
+     */
+    public function getLatitudeAttribute($value)
+    {
+        return $value !== null ? (float) $value : null;
+    }
+
+    /**
+     * Accessor para longitude - asegurar que se retorne como float
+     */
+    public function getLongitudeAttribute($value)
+    {
+        return $value !== null ? (float) $value : null;
+    }
 }

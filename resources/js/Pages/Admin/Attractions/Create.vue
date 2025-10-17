@@ -1,34 +1,24 @@
 <template>
-  <Head title="Editar Departamento - Admin" />
+  <Head title="Crear Atractivo - Admin" />
 
   <AdminLayout>
     <template #header>
       <div class="flex justify-between items-center">
         <div>
           <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Editar Departamento: {{ department?.name || 'Cargando...' }}
+            Crear Nuevo Atractivo
           </h2>
           <p class="mt-1 text-sm text-gray-600">
-            Modifica la información del departamento
+            Agrega un nuevo atractivo turístico al sistema
           </p>
         </div>
-        <div class="flex space-x-3">
-          <Link
-            v-if="department?.slug"
-            :href="route('admin.departments.show', department.slug)"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg inline-flex items-center text-sm font-medium transition duration-150"
-          >
-            <EyeIcon class="w-5 h-5 mr-2" />
-            Ver Detalle
-          </Link>
-          <Link
-            :href="route('admin.departments.index')"
-            class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg inline-flex items-center text-sm font-medium transition duration-150"
-          >
-            <ArrowLeftIcon class="w-5 h-5 mr-2" />
-            Volver a Lista
-          </Link>
-        </div>
+        <Link
+          :href="route('admin.attractions.index')"
+          class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg inline-flex items-center text-sm font-medium transition duration-150"
+        >
+          <ArrowLeftIcon class="w-5 h-5 mr-2" />
+          Volver a Lista
+        </Link>
       </div>
     </template>
 
@@ -39,7 +29,7 @@
           <div class="px-6 py-4 border-b border-gray-200">
             <h3 class="text-lg font-medium text-gray-900">Información Básica</h3>
             <p class="mt-1 text-sm text-gray-600">
-              Datos principales del departamento
+              Datos principales del atractivo turístico
             </p>
           </div>
           <div class="px-6 py-4 space-y-6">
@@ -47,7 +37,7 @@
               <!-- Name -->
               <div>
                 <label for="name" class="block text-sm font-medium text-gray-700">
-                  Nombre del Departamento *
+                  Nombre del Atractivo *
                 </label>
                 <input
                   id="name"
@@ -55,25 +45,73 @@
                   type="text"
                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                   :class="{ 'border-red-300': errors.name }"
-                  placeholder="Ej: Santa Cruz"
+                  placeholder="Ej: Salar de Uyuni"
                 />
                 <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name }}</p>
               </div>
 
-              <!-- Capital -->
+              <!-- Department -->
               <div>
-                <label for="capital" class="block text-sm font-medium text-gray-700">
-                  Capital *
+                <label for="department_id" class="block text-sm font-medium text-gray-700">
+                  Departamento *
+                </label>
+                <select
+                  id="department_id"
+                  v-model="form.department_id"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                  :class="{ 'border-red-300': errors.department_id }"
+                >
+                  <option value="">Selecciona un departamento</option>
+                  <option
+                    v-for="department in departments"
+                    :key="department.id"
+                    :value="department.id"
+                  >
+                    {{ department.name }}
+                  </option>
+                </select>
+                <p v-if="errors.department_id" class="mt-1 text-sm text-red-600">{{ errors.department_id }}</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Type -->
+              <div>
+                <label for="type" class="block text-sm font-medium text-gray-700">
+                  Tipo de Atractivo *
+                </label>
+                <select
+                  id="type"
+                  v-model="form.type"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                  :class="{ 'border-red-300': errors.type }"
+                >
+                  <option value="">Selecciona un tipo</option>
+                  <option
+                    v-for="type in types"
+                    :key="type.value"
+                    :value="type.value"
+                  >
+                    {{ type.label }}
+                  </option>
+                </select>
+                <p v-if="errors.type" class="mt-1 text-sm text-red-600">{{ errors.type }}</p>
+              </div>
+
+              <!-- City -->
+              <div>
+                <label for="city" class="block text-sm font-medium text-gray-700">
+                  Ciudad/Municipio *
                 </label>
                 <input
-                  id="capital"
-                  v-model="form.capital"
+                  id="city"
+                  v-model="form.city"
                   type="text"
                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
-                  :class="{ 'border-red-300': errors.capital }"
-                  placeholder="Ej: Santa Cruz de la Sierra"
+                  :class="{ 'border-red-300': errors.city }"
+                  placeholder="Ej: Uyuni"
                 />
-                <p v-if="errors.capital" class="mt-1 text-sm text-red-600">{{ errors.capital }}</p>
+                <p v-if="errors.city" class="mt-1 text-sm text-red-600">{{ errors.city }}</p>
               </div>
             </div>
 
@@ -105,7 +143,7 @@
                 rows="4"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                 :class="{ 'border-red-300': errors.description }"
-                placeholder="Descripción detallada del departamento (mínimo 50 caracteres)"
+                placeholder="Descripción detallada del atractivo (mínimo 50 caracteres)"
               />
               <p class="mt-1 text-sm text-gray-500">
                 {{ form.description?.length || 0 }} / 50 caracteres mínimo
@@ -120,11 +158,11 @@
           <div class="px-6 py-4 border-b border-gray-200">
             <h3 class="text-lg font-medium text-gray-900">Información Geográfica</h3>
             <p class="mt-1 text-sm text-gray-600">
-              Coordenadas y datos de ubicación
+              Ubicación exacta del atractivo
             </p>
           </div>
           <div class="px-6 py-4 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Latitude -->
               <div>
                 <label for="latitude" class="block text-sm font-medium text-gray-700">
@@ -137,7 +175,7 @@
                   step="any"
                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                   :class="{ 'border-red-300': errors.latitude }"
-                  placeholder="-16.5000"
+                  placeholder="-16.2902"
                 />
                 <p v-if="errors.latitude" class="mt-1 text-sm text-red-600">{{ errors.latitude }}</p>
               </div>
@@ -154,25 +192,9 @@
                   step="any"
                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                   :class="{ 'border-red-300': errors.longitude }"
-                  placeholder="-68.1500"
+                  placeholder="-67.1097"
                 />
                 <p v-if="errors.longitude" class="mt-1 text-sm text-red-600">{{ errors.longitude }}</p>
-              </div>
-
-              <!-- Population -->
-              <div>
-                <label for="population" class="block text-sm font-medium text-gray-700">
-                  Población
-                </label>
-                <input
-                  id="population"
-                  v-model.number="form.population"
-                  type="number"
-                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
-                  :class="{ 'border-red-300': errors.population }"
-                  placeholder="2800000"
-                />
-                <p v-if="errors.population" class="mt-1 text-sm text-red-600">{{ errors.population }}</p>
               </div>
             </div>
 
@@ -196,50 +218,108 @@
           </div>
         </div>
 
-        <!-- Current Images -->
-        <div class="bg-white shadow rounded-lg" v-if="department.media && department.media.length > 0">
+        <!-- Additional Information -->
+        <div class="bg-white shadow rounded-lg">
           <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-medium text-gray-900">Imágenes Actuales</h3>
-            <p class="mt-1 text-sm text-gray-600">
-              Imágenes ya asociadas a este departamento
-            </p>
+            <h3 class="text-lg font-medium text-gray-900">Información Adicional</h3>
           </div>
-          <div class="px-6 py-4">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div
-                v-for="media in department.media"
-                :key="media.id"
-                class="relative group"
-              >
-                <img
-                  :src="media.url"
-                  :alt="media.name"
-                  class="h-24 w-full object-cover rounded-lg"
+          <div class="px-6 py-4 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Entry Price -->
+              <div>
+                <label for="entry_price" class="block text-sm font-medium text-gray-700">
+                  Precio de Entrada (Bs)
+                </label>
+                <input
+                  id="entry_price"
+                  v-model.number="form.entry_price"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                  :class="{ 'border-red-300': errors.entry_price }"
+                  placeholder="0.00"
                 />
-                <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                  <button
-                    type="button"
-                    @click="removeExistingImage(media.id)"
-                    class="bg-red-500 text-white rounded-full p-2 hover:bg-red-600"
-                  >
-                    <TrashIcon class="h-4 w-4" />
-                  </button>
-                </div>
+                <p v-if="errors.entry_price" class="mt-1 text-sm text-red-600">{{ errors.entry_price }}</p>
               </div>
+
+              <!-- Duration -->
+              <div>
+                <label for="duration_hours" class="block text-sm font-medium text-gray-700">
+                  Duración Recomendada (horas)
+                </label>
+                <input
+                  id="duration_hours"
+                  v-model.number="form.duration_hours"
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                  :class="{ 'border-red-300': errors.duration_hours }"
+                  placeholder="2.0"
+                />
+                <p v-if="errors.duration_hours" class="mt-1 text-sm text-red-600">{{ errors.duration_hours }}</p>
+              </div>
+            </div>
+
+            <!-- Opening Hours -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="opening_hours" class="block text-sm font-medium text-gray-700">
+                  Horario de Apertura
+                </label>
+                <input
+                  id="opening_hours"
+                  v-model="form.opening_hours"
+                  type="time"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                  :class="{ 'border-red-300': errors.opening_hours }"
+                />
+                <p v-if="errors.opening_hours" class="mt-1 text-sm text-red-600">{{ errors.opening_hours }}</p>
+              </div>
+
+              <div>
+                <label for="closing_hours" class="block text-sm font-medium text-gray-700">
+                  Horario de Cierre
+                </label>
+                <input
+                  id="closing_hours"
+                  v-model="form.closing_hours"
+                  type="time"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                  :class="{ 'border-red-300': errors.closing_hours }"
+                />
+                <p v-if="errors.closing_hours" class="mt-1 text-sm text-red-600">{{ errors.closing_hours }}</p>
+              </div>
+            </div>
+
+            <!-- Best Time to Visit -->
+            <div>
+              <label for="best_time_to_visit" class="block text-sm font-medium text-gray-700">
+                Mejor Época para Visitar
+              </label>
+              <input
+                id="best_time_to_visit"
+                v-model="form.best_time_to_visit"
+                type="text"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                :class="{ 'border-red-300': errors.best_time_to_visit }"
+                placeholder="Ej: Mayo a Septiembre (época seca)"
+              />
+              <p v-if="errors.best_time_to_visit" class="mt-1 text-sm text-red-600">{{ errors.best_time_to_visit }}</p>
             </div>
           </div>
         </div>
 
-        <!-- New Images -->
+        <!-- Images -->
         <div class="bg-white shadow rounded-lg">
           <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-medium text-gray-900">Agregar Nuevas Imágenes</h3>
+            <h3 class="text-lg font-medium text-gray-900">Imágenes</h3>
             <p class="mt-1 text-sm text-gray-600">
-              Sube nuevas imágenes para el departamento
+              Agrega imágenes del atractivo turístico
             </p>
           </div>
           <div class="px-6 py-4">
-            <!-- Image Upload Area -->
             <div
               @drop="handleDrop"
               @dragover.prevent
@@ -267,7 +347,7 @@
               </div>
             </div>
 
-            <!-- New Images Preview -->
+            <!-- Images Preview -->
             <div v-if="imagesPreviews.length > 0" class="mt-4">
               <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div
@@ -281,7 +361,7 @@
                   />
                   <button
                     type="button"
-                    @click="removeNewImage(index)"
+                    @click="removeImage(index)"
                     class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <XMarkIcon class="h-3 w-3" />
@@ -294,10 +374,10 @@
           </div>
         </div>
 
-        <!-- Additional Options -->
+        <!-- Options -->
         <div class="bg-white shadow rounded-lg">
           <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-medium text-gray-900">Opciones Adicionales</h3>
+            <h3 class="text-lg font-medium text-gray-900">Opciones</h3>
           </div>
           <div class="px-6 py-4 space-y-4">
             <div class="flex items-center">
@@ -305,35 +385,31 @@
                 id="is_active"
                 v-model="form.is_active"
                 type="checkbox"
-                class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                class="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
               />
               <label for="is_active" class="ml-2 block text-sm text-gray-900">
-                Departamento activo (visible en el sitio público)
+                Atractivo activo (visible en el sitio público)
               </label>
             </div>
 
-            <div>
-              <label for="sort_order" class="block text-sm font-medium text-gray-700">
-                Orden de Visualización
-              </label>
+            <div class="flex items-center">
               <input
-                id="sort_order"
-                v-model.number="form.sort_order"
-                type="number"
-                class="mt-1 block w-24 border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
-                placeholder="1"
+                id="is_featured"
+                v-model="form.is_featured"
+                type="checkbox"
+                class="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
               />
-              <p class="mt-1 text-sm text-gray-500">
-                Orden en que aparece en listados (menor número = mayor prioridad)
-              </p>
+              <label for="is_featured" class="ml-2 block text-sm text-gray-900">
+                Atractivo destacado (aparece en la página principal)
+              </label>
             </div>
           </div>
         </div>
 
-        <!-- Form Actions -->
+        <!-- Submit Button -->
         <div class="flex justify-end space-x-3">
           <Link
-            :href="route('admin.departments.index')"
+            :href="route('admin.attractions.index')"
             class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Cancelar
@@ -348,10 +424,10 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Actualizando...
+              Creando...
             </template>
             <template v-else>
-              Actualizar Departamento
+              Crear Atractivo
             </template>
           </button>
         </div>
@@ -362,15 +438,13 @@
 
 <script>
 import { ref } from 'vue'
-import { Head, Link, useForm, router } from '@inertiajs/vue3'
+import { Head, Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/Admin/AdminLayout.vue'
 import {
   ArrowLeftIcon,
-  EyeIcon,
   MapPinIcon,
   PhotoIcon,
   XMarkIcon,
-  TrashIcon,
 } from '@heroicons/vue/24/outline'
 
 export default {
@@ -379,29 +453,34 @@ export default {
     Link,
     AdminLayout,
     ArrowLeftIcon,
-    EyeIcon,
     MapPinIcon,
     PhotoIcon,
     XMarkIcon,
-    TrashIcon,
   },
 
   props: {
-    department: Object,
+    departments: Array,
+    types: Array,
     errors: Object,
   },
 
-  setup(props) {
-    const { data: form, patch, processing } = useForm({
-      name: props.department.name,
-      capital: props.department.capital,
-      description: props.department.description,
-      short_description: props.department.short_description,
-      latitude: props.department.latitude,
-      longitude: props.department.longitude,
-      population: props.department.population,
-      is_active: props.department.is_active,
-      sort_order: props.department.sort_order,
+  setup() {
+    const { data: form, post, processing } = useForm({
+      name: '',
+      department_id: '',
+      type: '',
+      city: '',
+      description: '',
+      short_description: '',
+      latitude: null,
+      longitude: null,
+      entry_price: null,
+      duration_hours: null,
+      opening_hours: '',
+      closing_hours: '',
+      best_time_to_visit: '',
+      is_active: true,
+      is_featured: false,
       images: [],
     })
 
@@ -430,24 +509,13 @@ export default {
       })
     }
 
-    const removeNewImage = (index) => {
+    const removeImage = (index) => {
       form.images.splice(index, 1)
       imagesPreviews.value.splice(index, 1)
     }
 
-    const removeExistingImage = (mediaId) => {
-      if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
-        router.delete(route('admin.departments.remove-media', {
-          department: props.department.id,
-          media: mediaId
-        }), {
-          preserveScroll: true,
-        })
-      }
-    }
-
     const submit = () => {
-      patch(route('admin.departments.update', props.department.id))
+      post(route('admin.attractions.store'))
     }
 
     return {
@@ -456,8 +524,7 @@ export default {
       imagesPreviews,
       handleFileSelect,
       handleDrop,
-      removeNewImage,
-      removeExistingImage,
+      removeImage,
       submit,
     }
   },

@@ -111,9 +111,6 @@
         <slot />
       </div>
     </main>
-
-    <!-- Flash Messages -->
-    <FlashMessages v-if="$page.props.flash" :flash="$page.props.flash" />
   </div>
 </template>
 
@@ -124,7 +121,6 @@ import Dropdown from '@/Components/Dropdown.vue'
 import DropdownLink from '@/Components/DropdownLink.vue'
 import NavLink from '@/Components/NavLink.vue'
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
-import FlashMessages from '@/Components/FlashMessages.vue'
 
 export default {
   components: {
@@ -134,7 +130,6 @@ export default {
     DropdownLink,
     NavLink,
     ResponsiveNavLink,
-    FlashMessages,
   },
 
   setup() {

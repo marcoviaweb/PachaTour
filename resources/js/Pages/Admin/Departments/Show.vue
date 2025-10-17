@@ -14,7 +14,7 @@
         </div>
         <div class="flex space-x-3">
           <Link
-            :href="route('admin.departments.edit', department.id)"
+            :href="route('admin.departments.edit', department.slug)"
             class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg inline-flex items-center text-sm font-medium transition duration-150"
           >
             <PencilIcon class="w-5 h-5 mr-2" />
@@ -315,7 +315,7 @@
                 <MapPinIcon class="h-8 w-8 text-gray-400 mx-auto mb-2" />
                 <p class="text-sm text-gray-500">Sin coordenadas establecidas</p>
                 <Link
-                  :href="route('admin.departments.edit', department.id)"
+                  :href="route('admin.departments.edit', department.slug)"
                   class="mt-2 inline-flex items-center text-sm text-blue-600 hover:text-blue-900"
                 >
                   Agregar coordenadas
@@ -408,6 +408,26 @@ export default {
   },
 
   setup(props) {
+    // Función route simplificada
+    const route = (name, params = {}) => {
+      const routes = {
+        'admin.departments.index': '/admin/departments',
+        'admin.departments.edit': (slug) => `/admin/departments/${slug}/edit`,
+        'admin.departments.toggle-status': (slug) => `/admin/departments/${slug}/toggle-status`,
+        'admin.attractions.show': (id) => `/admin/attractions/${id}`,
+        'departments.show': (slug) => `/departamentos/${slug}`,
+      };
+
+      if (typeof routes[name] === 'function') {
+        return routes[name](params);
+      } else if (routes[name]) {
+        return routes[name];
+      } else {
+        console.error(`Route '${name}' not found`);
+        return '#';
+      }
+    };
+
     const showImageModal = ref(false)
     const selectedImage = ref(null)
 
@@ -422,7 +442,7 @@ export default {
     }
 
     const toggleStatus = () => {
-      router.patch(route('admin.departments.toggle-status', props.department.id), {}, {
+      router.patch(route('admin.departments.toggle-status', props.department.slug), {}, {
         preserveScroll: true,
       })
     }
@@ -444,6 +464,7 @@ export default {
       toggleStatus,
       openImageModal,
       closeImageModal,
+      route,
     }
   },
 }

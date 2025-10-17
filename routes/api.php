@@ -178,7 +178,8 @@ Route::prefix('attractions')->group(function () {
     Route::get('/{slug}', [AttractionApiController::class, 'show']);
 });
 
-// Protected attraction management routes (Admin only)
+// Protected attraction management routes (Admin only) - COMMENTED OUT TO AVOID CONFLICTS WITH WEB ROUTES
+/*
 Route::middleware(['auth:sanctum', 'auth.api', 'role:admin'])->group(function () {
     Route::prefix('admin/attractions')->group(function () {
         Route::get('/', [AttractionController::class, 'index']);
@@ -203,6 +204,7 @@ Route::middleware(['auth:sanctum', 'auth.api', 'role:admin'])->group(function ()
         });
     });
 });
+*/
 
 /*
 |--------------------------------------------------------------------------

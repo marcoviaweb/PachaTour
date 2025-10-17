@@ -343,6 +343,23 @@ export default {
   },
 
   setup() {
+    // Función route simplificada
+    const route = (name, params = {}) => {
+      const routes = {
+        'admin.departments.index': '/admin/departments',
+        'admin.departments.store': '/admin/departments',
+      };
+
+      if (typeof routes[name] === 'function') {
+        return routes[name](params);
+      } else if (routes[name]) {
+        return routes[name];
+      } else {
+        console.error(`Route '${name}' not found`);
+        return '#';
+      }
+    };
+
     const { data: form, post, processing } = useForm({
       name: '',
       capital: '',
@@ -398,6 +415,7 @@ export default {
       handleDrop,
       removeImage,
       submit,
+      route,
     }
   },
 }

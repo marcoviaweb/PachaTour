@@ -16,11 +16,17 @@ class RoleMiddleware
     public function handle(Request $request, Closure $next, string $role): Response
     {
         if (!auth()->check()) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Unauthenticated'], 401);
+            }
+            return redirect('/login')->with('error', 'Debe iniciar sesión para acceder a esta área.');
         }
 
         if (auth()->user()->role !== $role) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+            return redirect('/')->with('error', 'No tiene permisos para acceder a esta área.');
         }
 
         return $next($request);

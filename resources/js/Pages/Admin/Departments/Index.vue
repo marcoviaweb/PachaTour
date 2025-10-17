@@ -256,21 +256,21 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <div v-if="department.latitude && department.longitude" class="flex items-center space-x-1">
                     <MapPinIcon class="h-4 w-4 text-green-500" />
-                    <span class="text-xs">{{ department.latitude.toFixed(4) }}, {{ department.longitude.toFixed(4) }}</span>
+                    <span class="text-xs">{{ Number(department.latitude).toFixed(4) }}, {{ Number(department.longitude).toFixed(4) }}</span>
                   </div>
                   <span v-else class="text-gray-400 italic">Sin coordenadas</span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div class="flex items-center justify-end space-x-2">
                     <Link
-                      :href="route('admin.departments.show', department.id)"
+                      :href="route('admin.departments.show', department.slug)"
                       class="text-blue-600 hover:text-blue-900"
                       title="Ver detalles"
                     >
                       <EyeIcon class="h-4 w-4" />
                     </Link>
                     <Link
-                      :href="route('admin.departments.edit', department.id)"
+                      :href="route('admin.departments.edit', department.slug)"
                       class="text-indigo-600 hover:text-indigo-900"
                       title="Editar"
                     >
@@ -358,6 +358,27 @@ export default {
   },
 
   setup(props) {
+    // Función route simplificada sin dependencias de Ziggy
+    const route = (name, params = {}) => {
+      const routes = {
+        'admin.departments.index': '/admin/departments',
+        'admin.departments.create': '/admin/departments/create',
+        'admin.departments.show': (slug) => `/admin/departments/${slug}`,
+        'admin.departments.edit': (slug) => `/admin/departments/${slug}/edit`,
+        'admin.departments.destroy': (slug) => `/admin/departments/${slug}`,
+        'admin.departments.toggle-status': (slug) => `/admin/departments/${slug}/toggle-status`,
+      };
+
+      if (typeof routes[name] === 'function') {
+        return routes[name](params);
+      } else if (routes[name]) {
+        return routes[name];
+      } else {
+        console.error(`Route '${name}' not found`);
+        return '#';
+      }
+    };
+
     const searchForm = reactive({
       search: props.filters.search || '',
       status: props.filters.status || '',
@@ -386,7 +407,7 @@ export default {
     }
 
     const toggleStatus = (department) => {
-      router.patch(route('admin.departments.toggle-status', department.id), {}, {
+      router.patch(route('admin.departments.toggle-status', department.slug), {}, {
         preserveScroll: true,
       })
     }
@@ -398,7 +419,7 @@ export default {
 
     const deleteDepartment = () => {
       if (departmentToDelete.value) {
-        router.delete(route('admin.departments.destroy', departmentToDelete.value.id), {
+        router.delete(route('admin.departments.destroy', departmentToDelete.value.slug), {
           onSuccess: () => {
             showDeleteModal.value = false
             departmentToDelete.value = null
@@ -417,6 +438,7 @@ export default {
       toggleStatus,
       confirmDelete,
       deleteDepartment,
+      route,
     }
   },
 }
