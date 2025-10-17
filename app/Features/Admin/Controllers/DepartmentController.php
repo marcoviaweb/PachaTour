@@ -48,7 +48,7 @@ class DepartmentController extends Controller
         $sortDirection = $request->get('direction', 'asc');
         $query->orderBy($sortField, $sortDirection);
 
-        $departments = $query->paginate(15)->withQueryString();
+        $departments = $query->paginate(15)->appends($request->all());
 
         return Inertia::render('Admin/Departments/Index', [
             'departments' => $departments,

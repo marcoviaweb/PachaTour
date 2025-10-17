@@ -16,8 +16,7 @@ class AttractionController extends Controller
 {
     public function __construct()
     {
-        // Temporalmente deshabilitado para debug
-        // $this->middleware(['auth', 'role:admin']);
+        $this->middleware(['auth', 'role:admin']);
     }
 
     /**
@@ -400,7 +399,7 @@ class AttractionController extends Controller
                 'file_size' => $image->getSize(),
                 'mime_type' => $image->getMimeType(),
                 'sort_order' => $maxSortOrder,
-                'url' => Storage::disk('public')->url($path),
+                'url' => '/storage/' . $path,
             ]);
         }
     }

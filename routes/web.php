@@ -401,8 +401,8 @@ Route::get('/test-models', function () {
     }
 });
 
-// Admin routes
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+// Admin routes  
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Redirect /admin to /admin/dashboard
     Route::get('/', function () {
         return redirect('/admin/dashboard');
@@ -438,78 +438,3 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 });
 
 require __DIR__.'/auth.php';
-
-// Temporal test route for admin dashboard  
-Route::get('/test-admin', function () {
-    return response()->json([
-        'message' => 'Admin dashboard test working!',
-        'user' => auth()->user(),
-        'departments' => \App\Features\Departments\Models\Department::count(),
-        'attractions' => \App\Features\Attractions\Models\Attraction::count(),
-        'users' => \App\Models\User::count(),
-    ]);
-})->middleware(['auth']);
-
-// Temporal test route for attractions controller  
-Route::get('/test-attractions-controller', function () {
-    try {
-        $controller = new \App\Features\Admin\Controllers\AttractionController();
-        $request = new \Illuminate\Http\Request();
-        
-        // Simulate getting attractions without authentication
-        $attractions = \App\Features\Attractions\Models\Attraction::with(['department:id,name,slug', 'media'])
-            ->paginate(10);
-            
-        return response()->json([
-            'status' => 'success',
-            'controller' => 'AttractionController working',
-            'attractions_count' => $attractions->total(),
-            'attractions' => $attractions->items(),
-            'departments_count' => \App\Features\Departments\Models\Department::count(),
-        ]);
-    } catch (Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-        ], 500);
-    }
-});
-
-// Ruta de login temporal para pruebas
-Route::get('/temp-login', function () {
-    $user = \App\Models\User::where('email', 'admin@pachatour.com')->first();
-    if ($user) {
-        auth()->login($user, true); // Remember me = true para mantener la sesión
-        session()->save(); // Forzar guardado de sesión
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Usuario autenticado correctamente',
-            'user' => [
-                'id' => $user->id,
-                'email' => $user->email,
-                'name' => $user->name,
-                'role' => $user->role
-            ],
-            'redirect' => '/admin/attractions'
-        ]);
-    }
-    return response()->json(['success' => false, 'message' => 'Usuario admin no encontrado']);
-});
-
-// Debug ruta para verificar autenticación
-Route::get('/debug-auth-status', function () {
-    return response()->json([
-        'authenticated' => auth()->check(),
-        'user' => auth()->user(),
-        'session_id' => session()->getId(),
-        'is_admin' => auth()->check() && auth()->user()->role === 'admin'
-    ]);
-});
-
-// Página de test para filtros
-Route::get('/test-filters', function () {
-    return view('test-filters');
-});
