@@ -11,8 +11,8 @@
             Departamentos de Bolivia
           </h1>
           <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-            Explora los nueve departamentos bolivianos y descubre la diversidad 
-            cultural, natural e histórica de cada región
+            Explora los nueve departamentos de Bolivia y descubre la riqueza cultural, 
+        natural e histórica que cada región tiene para ofrecer.
           </p>
         </div>
       </div>
