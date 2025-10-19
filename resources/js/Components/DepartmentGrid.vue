@@ -146,12 +146,12 @@ export default {
         return `/storage/${department.image_path}`
       }
       // Imagen por defecto basada en el nombre del departamento
-      return `/images/departments/${department.slug || department.name.toLowerCase()}.svg`
+      return `/images/departments/${department.slug || department.name.toLowerCase()}.jpg`
     }
 
     const handleImageError = (event) => {
       // Imagen de fallback
-      event.target.src = '/images/placeholder.svg'
+      event.target.src = '/images/placeholder.jpg'
     }
 
     const getAttractionCount = (department) => {
