@@ -93,16 +93,18 @@
                 </div>
               </dl>
               <div class="mt-4">
-                <div class="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <div class="text-center">
-                    <MapPinIcon class="h-8 w-8 text-green-500 mx-auto mb-2" />
-                    <p class="text-sm text-gray-600">
-                      Coordenadas: {{ attraction.latitude }}, {{ attraction.longitude }}
-                    </p>
-                    <p class="text-xs text-gray-500 mt-1">
-                      Mapa interactivo se mostrará aquí
-                    </p>
-                  </div>
+                <div class="h-64 bg-white rounded-lg overflow-hidden border border-gray-300">
+                  <AttractionMap :attraction="attraction" />
+                </div>
+                <div class="mt-3 flex items-center justify-between text-xs text-gray-500">
+                  <span>📍 Ubicación exacta del atractivo turístico</span>
+                  <a 
+                    :href="`https://www.google.com/maps?q=${attraction.latitude},${attraction.longitude}`"
+                    target="_blank"
+                    class="text-blue-600 hover:text-blue-800 underline"
+                  >
+                    Ver en Google Maps →
+                  </a>
                 </div>
               </div>
             </div>
@@ -123,13 +125,81 @@
                   <dt class="text-sm font-medium text-gray-500">Duración Recomendada</dt>
                   <dd class="mt-1 text-sm text-gray-900">{{ attraction.duration_hours }} horas</dd>
                 </div>
-                <div v-if="attraction.opening_hours">
-                  <dt class="text-sm font-medium text-gray-500">Horario de Apertura</dt>
-                  <dd class="mt-1 text-sm text-gray-900">{{ attraction.opening_hours }}</dd>
-                </div>
-                <div v-if="attraction.closing_hours">
-                  <dt class="text-sm font-medium text-gray-500">Horario de Cierre</dt>
-                  <dd class="mt-1 text-sm text-gray-900">{{ attraction.closing_hours }}</dd>
+                <div v-if="attraction.opening_hours && hasValidSchedule(attraction.opening_hours)" class="col-span-2">
+                  <dt class="text-sm font-medium text-gray-500 mb-3">Horarios de Atención</dt>
+                  <dd class="mt-1">
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                      <!-- Current day status -->
+                      <div v-if="getTodaySchedule(attraction.opening_hours)" class="mb-4 pb-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center">
+                            <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                              </svg>
+                            </div>
+                            <div>
+                              <div class="text-sm font-medium text-gray-900">Hoy ({{ getCurrentDayName() }})</div>
+                              <div v-if="getTodaySchedule(attraction.opening_hours) === 'closed'" class="text-lg font-bold text-red-600">
+                                Cerrado
+                              </div>
+                              <div v-else class="text-lg font-bold text-gray-900">
+                                {{ formatTime(getTodaySchedule(attraction.opening_hours).open) }} - {{ formatTime(getTodaySchedule(attraction.opening_hours).close) }}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <!-- Status indicator -->
+                          <span 
+                            :class="[
+                              'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium',
+                              isCurrentlyOpen(attraction.opening_hours)
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
+                            ]"
+                          >
+                            <div 
+                              :class="[
+                                'w-2 h-2 rounded-full mr-2',
+                                isCurrentlyOpen(attraction.opening_hours)
+                                  ? 'bg-green-400'
+                                  : 'bg-red-400'
+                              ]"
+                            ></div>
+                            {{ isCurrentlyOpen(attraction.opening_hours) ? 'Abierto' : 'Cerrado' }}
+                          </span>
+                        </div>
+                      </div>
+
+                      <!-- Weekly schedule -->
+                      <div class="space-y-2">
+                        <h4 class="text-sm font-medium text-gray-700 mb-3">Horarios de la semana</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <div 
+                            v-for="(schedule, day) in getWeeklySchedule(attraction.opening_hours)" 
+                            :key="day"
+                            :class="[
+                              'flex items-center justify-between p-2 rounded-lg text-sm',
+                              isToday(day) ? 'bg-blue-50 border border-blue-200' : 'bg-white border border-gray-200'
+                            ]"
+                          >
+                            <span :class="[
+                              'font-medium capitalize',
+                              isToday(day) ? 'text-blue-900' : 'text-gray-700'
+                            ]">
+                              {{ getDayLabel(day) }}
+                            </span>
+                            <span :class="[
+                              'text-xs',
+                              schedule === 'closed' ? 'text-red-600' : 'text-gray-600'
+                            ]">
+                              {{ schedule === 'closed' ? 'Cerrado' : `${formatTime(schedule.open)} - ${formatTime(schedule.close)}` }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </dd>
                 </div>
                 <div v-if="attraction.best_time_to_visit" class="col-span-2">
                   <dt class="text-sm font-medium text-gray-500">Mejor Época para Visitar</dt>
@@ -316,6 +386,7 @@ import { ref } from 'vue'
 import { Head, Link, router } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/Admin/AdminLayout.vue'
 import Modal from '@/Components/Modal.vue'
+import AttractionMap from '@/Components/AttractionMap.vue'
 import {
   ArrowLeftIcon,
   PencilIcon,
@@ -328,6 +399,7 @@ import {
 export default {
   components: {
     Head,
+    AttractionMap,
     Link,
     AdminLayout,
     Modal,
@@ -356,6 +428,104 @@ export default {
         hour: '2-digit',
         minute: '2-digit'
       })
+    }
+
+    const formatTime = (timeString) => {
+      if (!timeString) return '--:--'
+      
+      // Convertir a string si no lo es
+      const timeStr = String(timeString)
+      
+      // Si ya viene en formato HH:mm, lo devolvemos tal como está
+      if (timeStr.match(/^\d{2}:\d{2}$/)) {
+        return timeStr
+      }
+      
+      // Si viene en otro formato, intentamos parsearlo
+      try {
+        const timeParts = timeStr.split(':')
+        if (timeParts.length >= 2) {
+          const hours = timeParts[0].padStart(2, '0')
+          const minutes = timeParts[1].padStart(2, '0')
+          return `${hours}:${minutes}`
+        }
+        return timeStr
+      } catch (e) {
+        return timeStr
+      }
+    }
+
+    const hasValidSchedule = (openingHours) => {
+      if (!openingHours || typeof openingHours !== 'object') return false
+      return Object.keys(openingHours).length > 0
+    }
+
+    const getCurrentDayName = () => {
+      return new Date().toLocaleDateString('es-ES', { weekday: 'long' })
+    }
+
+    const getDayLabel = (day) => {
+      const days = {
+        'monday': 'Lunes',
+        'tuesday': 'Martes', 
+        'wednesday': 'Miércoles',
+        'thursday': 'Jueves',
+        'friday': 'Viernes',
+        'saturday': 'Sábado',
+        'sunday': 'Domingo'
+      }
+      return days[day] || day
+    }
+
+    const isToday = (day) => {
+      const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
+      return day === today
+    }
+
+    const getTodaySchedule = (openingHours) => {
+      if (!openingHours) return null
+      const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
+      return openingHours[today] || null
+    }
+
+    const getWeeklySchedule = (openingHours) => {
+      if (!openingHours) return {}
+      const daysOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+      const schedule = {}
+      
+      daysOrder.forEach(day => {
+        if (openingHours[day]) {
+          schedule[day] = openingHours[day]
+        }
+      })
+      
+      return schedule
+    }
+
+    const isCurrentlyOpen = (openingHours) => {
+      const todaySchedule = getTodaySchedule(openingHours)
+      if (!todaySchedule || todaySchedule === 'closed') return false
+      
+      try {
+        const now = new Date()
+        const currentTime = now.getHours() * 60 + now.getMinutes()
+        
+        const parseTime = (timeStr) => {
+          const [hours, minutes] = String(timeStr).split(':').map(Number)
+          if (isNaN(hours) || isNaN(minutes)) return null
+          return hours * 60 + minutes
+        }
+        
+        const openTime = parseTime(todaySchedule.open)
+        const closeTime = parseTime(todaySchedule.close)
+        
+        if (openTime === null || closeTime === null) return false
+        
+        return currentTime >= openTime && currentTime <= closeTime
+      } catch (e) {
+        console.warn('Error parsing schedule:', e)
+        return false
+      }
     }
 
     const toggleStatus = () => {
@@ -400,6 +570,14 @@ export default {
       showImageModal,
       selectedImage,
       formatDate,
+      formatTime,
+      hasValidSchedule,
+      getCurrentDayName,
+      getDayLabel,
+      isToday,
+      getTodaySchedule,
+      getWeeklySchedule,
+      isCurrentlyOpen,
       toggleStatus,
       toggleFeatured,
       openImageModal,
