@@ -178,7 +178,7 @@
     <!-- Departments Table -->
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
       <div class="px-4 py-5 sm:p-6">
-        <div class="overflow-x-auto">
+        <div>
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
@@ -194,9 +194,6 @@
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Estado
                 </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Coordenadas
-                </th>
                 <th scope="col" class="relative px-6 py-3">
                   <span class="sr-only">Acciones</span>
                 </th>
@@ -205,28 +202,12 @@
             <tbody class="bg-white divide-y divide-gray-200">
               <tr v-for="department in departments.data" :key="department.id">
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center">
-                    <div class="flex-shrink-0 h-12 w-12">
-                      <img
-                        v-if="department.media?.[0]"
-                        class="h-12 w-12 rounded-lg object-cover"
-                        :src="department.media[0].url"
-                        :alt="department.name"
-                      />
-                      <div
-                        v-else
-                        class="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center"
-                      >
-                        <MapIcon class="h-6 w-6 text-gray-400" />
-                      </div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">
+                      {{ department.name }}
                     </div>
-                    <div class="ml-4">
-                      <div class="text-sm font-medium text-gray-900">
-                        {{ department.name }}
-                      </div>
-                      <div class="text-sm text-gray-500">
-                        {{ department.short_description }}
-                      </div>
+                    <div class="text-sm text-gray-500">
+                      {{ department.short_description }}
                     </div>
                   </div>
                 </td>
@@ -252,13 +233,6 @@
                   >
                     {{ department.is_active ? 'Activo' : 'Inactivo' }}
                   </button>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div v-if="department.latitude && department.longitude" class="flex items-center space-x-1">
-                    <MapPinIcon class="h-4 w-4 text-green-500" />
-                    <span class="text-xs">{{ Number(department.latitude).toFixed(4) }}, {{ Number(department.longitude).toFixed(4) }}</span>
-                  </div>
-                  <span v-else class="text-gray-400 italic">Sin coordenadas</span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div class="flex items-center justify-end space-x-2">
@@ -328,7 +302,6 @@ import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
   EyeIcon,
-  MapPinIcon,
   PencilIcon,
   TrashIcon,
 } from '@heroicons/vue/24/outline'
@@ -346,7 +319,6 @@ export default {
     CheckCircleIcon,
     ExclamationTriangleIcon,
     EyeIcon,
-    MapPinIcon,
     PencilIcon,
     TrashIcon,
   },

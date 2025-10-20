@@ -7,6 +7,7 @@ use App\Features\Departments\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -164,6 +165,11 @@ class DepartmentController extends Controller
     public function edit(Department $department)
     {
         $department->load('media');
+        
+        Log::info('EDIT: Department data being sent:', [
+            'department' => $department->toArray(),
+            'timestamp' => now()
+        ]);
         
         return Inertia::render('Admin/Departments/Edit', [
             'department' => $department

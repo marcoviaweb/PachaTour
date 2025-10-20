@@ -33,7 +33,7 @@
     </template>
 
     <div class="max-w-4xl mx-auto">
-      <form @submit.prevent="submit" class="space-y-8">
+      <form @submit.prevent="updateDepartment" class="space-y-8">
         <!-- Basic Information -->
         <div class="bg-white shadow rounded-lg">
           <div class="px-6 py-4 border-b border-gray-200">
@@ -174,123 +174,72 @@
                 />
                 <p v-if="errors.population" class="mt-1 text-sm text-red-600">{{ errors.population }}</p>
               </div>
-            </div>
 
-            <!-- Map Preview -->
-            <div v-if="form.latitude && form.longitude" class="mt-4">
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Vista Previa del Mapa
-              </label>
-              <div class="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                <div class="text-center">
-                  <MapPinIcon class="h-8 w-8 text-green-500 mx-auto mb-2" />
-                  <p class="text-sm text-gray-600">
-                    Coordenadas: {{ form.latitude }}, {{ form.longitude }}
-                  </p>
-                  <p class="text-xs text-gray-500 mt-1">
-                    Vista previa del mapa se mostrará aquí
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Current Images -->
-        <div class="bg-white shadow rounded-lg" v-if="department.media && department.media.length > 0">
-          <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-medium text-gray-900">Imágenes Actuales</h3>
-            <p class="mt-1 text-sm text-gray-600">
-              Imágenes ya asociadas a este departamento
-            </p>
-          </div>
-          <div class="px-6 py-4">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div
-                v-for="media in department.media"
-                :key="media.id"
-                class="relative group"
-              >
-                <img
-                  :src="media.url"
-                  :alt="media.name"
-                  class="h-24 w-full object-cover rounded-lg"
-                />
-                <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                  <button
-                    type="button"
-                    @click="removeExistingImage(media.id)"
-                    class="bg-red-500 text-white rounded-full p-2 hover:bg-red-600"
-                  >
-                    <TrashIcon class="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- New Images -->
-        <div class="bg-white shadow rounded-lg">
-          <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-medium text-gray-900">Agregar Nuevas Imágenes</h3>
-            <p class="mt-1 text-sm text-gray-600">
-              Sube nuevas imágenes para el departamento
-            </p>
-          </div>
-          <div class="px-6 py-4">
-            <!-- Image Upload Area -->
-            <div
-              @drop="handleDrop"
-              @dragover.prevent
-              @dragenter.prevent
-              class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors"
-            >
-              <PhotoIcon class="mx-auto h-12 w-12 text-gray-400" />
-              <div class="mt-4">
-                <label for="images" class="cursor-pointer">
-                  <span class="mt-2 block text-sm font-medium text-gray-900">
-                    Arrastra imágenes aquí o haz clic para seleccionar
-                  </span>
-                  <input
-                    id="images"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    class="hidden"
-                    @change="handleFileSelect"
-                  />
+              <!-- Area -->
+              <div>
+                <label for="area_km2" class="block text-sm font-medium text-gray-700">
+                  Área (km²)
                 </label>
-                <p class="mt-1 text-xs text-gray-500">
-                  PNG, JPG, GIF hasta 10MB cada una
-                </p>
+                <input
+                  id="area_km2"
+                  v-model.number="form.area_km2"
+                  type="number"
+                  step="0.01"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                  :class="{ 'border-red-300': errors.area_km2 }"
+                  placeholder="370621"
+                />
+                <p v-if="errors.area_km2" class="mt-1 text-sm text-red-600">{{ errors.area_km2 }}</p>
+              </div>
+
+              <!-- Climate -->
+              <div>
+                <label for="climate" class="block text-sm font-medium text-gray-700">
+                  Clima
+                </label>
+                <input
+                  id="climate"
+                  v-model="form.climate"
+                  type="text"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                  :class="{ 'border-red-300': errors.climate }"
+                  placeholder="Tropical, húmedo"
+                />
+                <p v-if="errors.climate" class="mt-1 text-sm text-red-600">{{ errors.climate }}</p>
               </div>
             </div>
 
-            <!-- New Images Preview -->
-            <div v-if="imagesPreviews.length > 0" class="mt-4">
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div
-                  v-for="(preview, index) in imagesPreviews"
-                  :key="index"
-                  class="relative group"
-                >
-                  <img
-                    :src="preview"
-                    class="h-24 w-full object-cover rounded-lg"
+            <!-- Languages -->
+            <div>
+              <label for="languages" class="block text-sm font-medium text-gray-700">
+                Idiomas Principales
+              </label>
+              <div class="mt-2 space-y-2">
+                <div v-for="(language, index) in form.languages" :key="index" class="flex items-center space-x-2">
+                  <input
+                    v-model="form.languages[index]"
+                    type="text"
+                    class="flex-1 border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                    placeholder="Ej: Español, Quechua"
                   />
                   <button
                     type="button"
-                    @click="removeNewImage(index)"
-                    class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    @click="removeLanguage(index)"
+                    class="text-red-600 hover:text-red-800"
                   >
-                    <XMarkIcon class="h-3 w-3" />
+                    <XMarkIcon class="h-5 w-5" />
                   </button>
                 </div>
+                <button
+                  type="button"
+                  @click="addLanguage"
+                  class="text-green-600 hover:text-green-800 text-sm font-medium"
+                >
+                  + Agregar idioma
+                </button>
               </div>
+              <p v-if="errors.languages" class="mt-1 text-sm text-red-600">{{ errors.languages }}</p>
             </div>
-
-            <p v-if="errors.images" class="mt-2 text-sm text-red-600">{{ errors.images }}</p>
           </div>
         </div>
 
@@ -361,105 +310,87 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import { Head, Link, useForm, router } from '@inertiajs/vue3'
+import { Head, Link } from '@inertiajs/vue3'
+import { ref, reactive } from 'vue'
 import AdminLayout from '@/Layouts/Admin/AdminLayout.vue'
+import axios from 'axios'
 import {
   ArrowLeftIcon,
   EyeIcon,
-  MapPinIcon,
-  PhotoIcon,
   XMarkIcon,
-  TrashIcon,
 } from '@heroicons/vue/24/outline'
 
 export default {
+  name: 'EditDepartment',
   components: {
     Head,
     Link,
     AdminLayout,
     ArrowLeftIcon,
     EyeIcon,
-    MapPinIcon,
-    PhotoIcon,
     XMarkIcon,
-    TrashIcon,
   },
-
   props: {
-    department: Object,
-    errors: Object,
+    department: {
+      type: Object,
+      required: true
+    }
   },
-
   setup(props) {
-    const { data: form, patch, processing } = useForm({
-      name: props.department.name,
-      capital: props.department.capital,
-      description: props.department.description,
-      short_description: props.department.short_description,
-      latitude: props.department.latitude,
-      longitude: props.department.longitude,
-      population: props.department.population,
-      is_active: props.department.is_active,
-      sort_order: props.department.sort_order,
-      images: [],
+    const processing = ref(false)
+    const errors = ref({})
+
+    // Initialize form directly with props (immediate assignment)
+    const form = reactive({
+      name: props.department?.name || '',
+      capital: props.department?.capital || '',
+      description: props.department?.description || '',
+      short_description: props.department?.short_description || '',
+      latitude: props.department?.latitude || null,
+      longitude: props.department?.longitude || null,
+      population: props.department?.population || null,
+      area_km2: props.department?.area_km2 || null,
+      climate: props.department?.climate || '',
+      languages: props.department?.languages?.length > 0 ? [...props.department.languages] : [''],
+      is_active: props.department?.is_active ?? true,
+      sort_order: props.department?.sort_order || 0
     })
 
-    const imagesPreviews = ref([])
+    const updateDepartment = async () => {
+      processing.value = true
+      errors.value = {}
 
-    const handleFileSelect = (event) => {
-      handleFiles(event.target.files)
-    }
-
-    const handleDrop = (event) => {
-      event.preventDefault()
-      handleFiles(event.dataTransfer.files)
-    }
-
-    const handleFiles = (files) => {
-      Array.from(files).forEach(file => {
-        if (file.type.startsWith('image/')) {
-          form.images.push(file)
-          
-          const reader = new FileReader()
-          reader.onload = (e) => {
-            imagesPreviews.value.push(e.target.result)
-          }
-          reader.readAsDataURL(file)
+      try {
+        const response = await axios.put(`/admin/departments/${props.department.slug}`, form)
+        alert('Departamento actualizado exitosamente')
+      } catch (error) {
+        console.error('Error al actualizar departamento:', error)
+        if (error.response?.data?.errors) {
+          errors.value = error.response.data.errors
+        } else {
+          alert('Error al actualizar el departamento')
         }
-      })
-    }
-
-    const removeNewImage = (index) => {
-      form.images.splice(index, 1)
-      imagesPreviews.value.splice(index, 1)
-    }
-
-    const removeExistingImage = (mediaId) => {
-      if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
-        router.delete(route('admin.departments.remove-media', {
-          department: props.department.id,
-          media: mediaId
-        }), {
-          preserveScroll: true,
-        })
+      } finally {
+        processing.value = false
       }
     }
 
-    const submit = () => {
-      patch(route('admin.departments.update', props.department.id))
+    const addLanguage = () => {
+      form.languages.push('')
+    }
+
+    const removeLanguage = (index) => {
+      form.languages.splice(index, 1)
     }
 
     return {
-      form,
       processing,
-      imagesPreviews,
-      handleFileSelect,
-      handleDrop,
-      removeNewImage,
-      removeExistingImage,
-      submit,
+      errors,
+      form,
+      addLanguage,
+      removeLanguage,
+      updateDepartment
     }
-  },
+  }
 }
 </script>

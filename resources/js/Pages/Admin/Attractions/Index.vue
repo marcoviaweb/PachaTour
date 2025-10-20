@@ -167,7 +167,7 @@
 
       <!-- Attractions List -->
       <div class="bg-white shadow overflow-hidden sm:rounded-md">
-        <div class="overflow-x-auto">
+        <div>
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
@@ -195,9 +195,6 @@
                   Calificación
                 </th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Visitas
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Acciones
                 </th>
               </tr>
@@ -217,31 +214,15 @@
                   />
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center">
-                    <div class="flex-shrink-0 h-12 w-12">
-                      <img
-                        v-if="attraction.media && attraction.media.length > 0"
-                        :src="attraction.media[0].url"
-                        :alt="attraction.name"
-                        class="h-12 w-12 rounded-lg object-cover"
+                  <div>
+                    <div class="text-sm font-medium text-gray-900 flex items-center">
+                      {{ attraction.name }}
+                      <StarIcon
+                        v-if="attraction.is_featured"
+                        class="h-4 w-4 text-yellow-400 ml-2"
                       />
-                      <div
-                        v-else
-                        class="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center"
-                      >
-                        <PhotoIcon class="h-6 w-6 text-gray-400" />
-                      </div>
                     </div>
-                    <div class="ml-4">
-                      <div class="text-sm font-medium text-gray-900 flex items-center">
-                        {{ attraction.name }}
-                        <StarIcon
-                          v-if="attraction.is_featured"
-                          class="h-4 w-4 text-yellow-400 ml-2"
-                        />
-                      </div>
-                      <div class="text-sm text-gray-500">{{ attraction.city }}</div>
-                    </div>
+                    <div class="text-sm text-gray-500">{{ attraction.city }}</div>
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
@@ -270,9 +251,6 @@
                     <StarIcon class="h-4 w-4 text-yellow-400 ml-1" />
                     <span class="text-gray-400 ml-1">({{ attraction.reviews_count || 0 }})</span>
                   </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ attraction.visits_count || 0 }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div class="flex space-x-2">
@@ -383,7 +361,6 @@ import {
   EyeIcon,
   PencilIcon,
   TrashIcon,
-  PhotoIcon,
 } from '@heroicons/vue/24/outline'
 
 export default {
@@ -402,7 +379,6 @@ export default {
     EyeIcon,
     PencilIcon,
     TrashIcon,
-    PhotoIcon,
   },
 
   props: {

@@ -9,6 +9,7 @@ use App\Features\Attractions\Requests\StoreAttractionRequest;
 use App\Features\Attractions\Requests\UpdateAttractionRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -184,6 +185,13 @@ class AttractionController extends Controller
         $types = collect(Attraction::TYPES)->map(function ($label, $value) {
             return ['value' => $value, 'label' => $label];
         })->values();
+
+        Log::info('EDIT Attraction: Data being sent', [
+            'attraction' => $attraction,
+            'departments_count' => $departments->count(),
+            'types_count' => $types->count(),
+            'timestamp' => date('Y-m-d H:i:s')
+        ]);
 
         return Inertia::render('Admin/Attractions/Edit', [
             'attraction' => $attraction,

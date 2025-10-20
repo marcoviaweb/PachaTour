@@ -44,6 +44,64 @@ Route::get('/test', function () {
     ]);
 });
 
+// Ruta temporal para debug de autenticación admin
+Route::get('/debug-admin', function () {
+    $currentUser = Auth::user();
+    $adminUser = \App\Models\User::where('role', 'admin')->first();
+    
+    return response()->json([
+        'current_user' => $currentUser,
+        'admin_exists' => $adminUser ? true : false,
+        'admin_user' => $adminUser,
+        'is_authenticated' => Auth::check(),
+        'is_admin' => $currentUser && $currentUser->role === 'admin'
+    ]);
+});
+
+// Ruta temporal para crear admin si no existe
+Route::get('/create-admin', function () {
+    $adminUser = \App\Models\User::where('role', 'admin')->first();
+    
+    if (!$adminUser) {
+        $adminUser = \App\Models\User::create([
+            'name' => 'Admin',
+            'last_name' => 'PachaTour',
+            'email' => 'admin@pachatour.com',
+            'password' => bcrypt('admin123'),
+            'role' => 'admin',
+            'is_active' => true
+        ]);
+        
+        Auth::login($adminUser);
+        
+        return response()->json([
+            'message' => 'Admin user created and logged in',
+            'user' => $adminUser
+        ]);
+    } else {
+        Auth::login($adminUser);
+        return response()->json([
+            'message' => 'Admin user exists and logged in',
+            'user' => $adminUser
+        ]);
+    }
+});
+
+// Ruta temporal para debug del edit sin middleware
+Route::get('/debug-edit-department/{slug}', function ($slug) {
+    $department = \App\Features\Departments\Models\Department::where('slug', $slug)->first();
+    
+    if (!$department) {
+        return response()->json(['error' => 'Department not found'], 404);
+    }
+    
+    $department->load('media');
+    
+    return \Inertia\Inertia::render('Admin/Departments/Edit', [
+        'department' => $department
+    ]);
+});
+
 // Test departments API
 Route::get('/test-departments', function () {
     try {

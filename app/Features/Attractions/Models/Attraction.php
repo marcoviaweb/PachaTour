@@ -282,8 +282,8 @@ class Attraction extends Model
      */
     public function getRouteKeyName(): string
     {
-        // Use slug for public routes, id for admin routes
-        if (request()->is('api/admin/*')) {
+        // Use id for admin routes, slug for public routes
+        if (request()->is('admin/*') || request()->is('api/admin/*')) {
             return 'id';
         }
         return 'slug';

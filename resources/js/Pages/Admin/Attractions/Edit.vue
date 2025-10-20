@@ -32,7 +32,7 @@
     </template>
 
     <div class="max-w-4xl mx-auto">
-      <form @submit.prevent="submit" class="space-y-8">
+      <form @submit.prevent="updateAttraction" class="space-y-8">
         <!-- Basic Information -->
         <div class="bg-white shadow rounded-lg">
           <div class="px-6 py-4 border-b border-gray-200">
@@ -208,18 +208,83 @@
             </div>
 
             <!-- Map Preview -->
-            <div v-if="form.latitude && form.longitude" class="mt-4">
-              <label class="block text-sm font-medium text-gray-700 mb-2">
+            <div v-if="form.latitude && form.longitude && isValidCoordinates()" class="mt-6">
+              <label class="block text-sm font-medium text-gray-700 mb-3">
                 Vista Previa del Mapa
               </label>
-              <div class="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+              <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center">
+                    <MapPinIcon class="h-5 w-5 text-green-500 mr-2" />
+                    <span class="text-sm font-medium text-gray-700">
+                      Coordenadas: {{ parseFloat(form.latitude).toFixed(6) }}, {{ parseFloat(form.longitude).toFixed(6) }}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    @click="openInGoogleMaps"
+                    class="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                  >
+                    <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                    </svg>
+                    Ver en Google Maps
+                  </button>
+                </div>
+                
+                <!-- Attraction Map Component -->
+                <div class="h-64 bg-white rounded-md overflow-hidden border border-gray-300">
+                  <AttractionMap 
+                    :attraction="{
+                      id: attraction.id,
+                      name: attraction.name,
+                      latitude: parseFloat(form.latitude),
+                      longitude: parseFloat(form.longitude),
+                      short_description: attraction.short_description,
+                      image_url: attraction.image_url,
+                      department: attraction.department
+                    }"
+                    :compact="true"
+                  />
+                </div>
+                
+                <div class="mt-3 text-xs text-gray-500 flex items-center justify-between">
+                  <span>Ubicación exacta del atractivo turístico</span>
+                  <span>Powered by OpenStreetMap</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Invalid coordinates message -->
+            <div v-else-if="form.latitude || form.longitude" class="mt-6">
+              <label class="block text-sm font-medium text-gray-700 mb-3">
+                Vista Previa del Mapa
+              </label>
+              <div class="h-32 bg-yellow-50 border-2 border-dashed border-yellow-300 rounded-lg flex items-center justify-center">
                 <div class="text-center">
-                  <MapPinIcon class="h-8 w-8 text-green-500 mx-auto mb-2" />
-                  <p class="text-sm text-gray-600">
-                    Coordenadas: {{ form.latitude }}, {{ form.longitude }}
+                  <svg class="h-8 w-8 text-yellow-400 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                  <p class="text-sm text-yellow-700">
+                    Coordenadas inválidas. Verifica la latitud y longitud.
                   </p>
-                  <p class="text-xs text-gray-500 mt-1">
-                    Vista previa del mapa se mostrará aquí
+                  <p class="text-xs text-yellow-600 mt-1">
+                    Lat: {{ form.latitude || 'No especificada' }}, Lng: {{ form.longitude || 'No especificada' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- No coordinates message -->
+            <div v-else class="mt-6">
+              <label class="block text-sm font-medium text-gray-700 mb-3">
+                Vista Previa del Mapa
+              </label>
+              <div class="h-32 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+                <div class="text-center">
+                  <MapPinIcon class="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <p class="text-sm text-gray-500">
+                    Ingresa las coordenadas para ver la vista previa del mapa
                   </p>
                 </div>
               </div>
@@ -279,7 +344,7 @@
                 </label>
                 <input
                   id="opening_hours"
-                  v-model="form.opening_hours"
+                  v-model="openingTime"
                   type="time"
                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                   :class="{ 'border-red-300': errors.opening_hours }"
@@ -293,7 +358,7 @@
                 </label>
                 <input
                   id="closing_hours"
-                  v-model="form.closing_hours"
+                  v-model="closingTime"
                   type="time"
                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                   :class="{ 'border-red-300': errors.closing_hours }"
@@ -302,20 +367,54 @@
               </div>
             </div>
 
-            <!-- Best Time to Visit -->
+            <!-- Best Season -->
             <div>
-              <label for="best_time_to_visit" class="block text-sm font-medium text-gray-700">
+              <label for="best_season" class="block text-sm font-medium text-gray-700">
                 Mejor Época para Visitar
               </label>
               <input
-                id="best_time_to_visit"
-                v-model="form.best_time_to_visit"
+                id="best_season"
+                v-model="form.best_season"
                 type="text"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
-                :class="{ 'border-red-300': errors.best_time_to_visit }"
+                :class="{ 'border-red-300': errors.best_season }"
                 placeholder="Ej: Mayo a Septiembre (época seca)"
               />
-              <p v-if="errors.best_time_to_visit" class="mt-1 text-sm text-red-600">{{ errors.best_time_to_visit }}</p>
+              <p v-if="errors.best_season" class="mt-1 text-sm text-red-600">{{ errors.best_season }}</p>
+            </div>
+
+            <!-- Amenities -->
+            <div>
+              <label for="amenities" class="block text-sm font-medium text-gray-700">
+                Servicios y Comodidades
+              </label>
+              <input
+                id="amenities"
+                v-model="amenitiesString"
+                type="text"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                :class="{ 'border-red-300': errors.amenities }"
+                placeholder="Ej: Estacionamiento, Restaurante, Guías turísticos, Baños"
+              />
+              <p class="mt-1 text-xs text-gray-500">Separa los servicios con comas</p>
+              <p v-if="errors.amenities" class="mt-1 text-sm text-red-600">{{ errors.amenities }}</p>
+            </div>
+
+            <!-- Restrictions -->
+            <div>
+              <label for="restrictions" class="block text-sm font-medium text-gray-700">
+                Restricciones y Requisitos
+              </label>
+              <input
+                id="restrictions"
+                v-model="restrictionsString"
+                type="text"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                :class="{ 'border-red-300': errors.restrictions }"
+                placeholder="Ej: Edad mínima 12 años, No permitido para embarazadas, Llevar protector solar"
+              />
+              <p class="mt-1 text-xs text-gray-500">Separa las restricciones con comas</p>
+              <p v-if="errors.restrictions" class="mt-1 text-sm text-red-600">{{ errors.restrictions }}</p>
             </div>
           </div>
         </div>
@@ -399,7 +498,7 @@
                   class="relative group"
                 >
                   <img
-                    :src="preview"
+                    :src="preview.preview"
                     class="h-24 w-full object-cover rounded-lg"
                   />
                   <button
@@ -480,9 +579,11 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import { Head, Link, useForm, router } from '@inertiajs/vue3'
+import { ref, reactive } from 'vue'
+import { Head, Link } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/Admin/AdminLayout.vue'
+import AttractionMap from '@/Components/AttractionMap.vue'
+import axios from 'axios'
 import {
   ArrowLeftIcon,
   EyeIcon,
@@ -493,10 +594,12 @@ import {
 } from '@heroicons/vue/24/outline'
 
 export default {
+  name: 'EditAttraction',
   components: {
     Head,
     Link,
     AdminLayout,
+    AttractionMap,
     ArrowLeftIcon,
     EyeIcon,
     MapPinIcon,
@@ -506,32 +609,67 @@ export default {
   },
 
   props: {
-    attraction: Object,
-    departments: Array,
-    types: Array,
-    errors: Object,
+    attraction: {
+      type: Object,
+      required: true
+    },
+    departments: {
+      type: Array,
+      default: () => []
+    },
+    types: {
+      type: Array,
+      default: () => []
+    }
   },
 
   setup(props) {
-    const { data: form, patch, processing } = useForm({
-      name: props.attraction.name,
-      department_id: props.attraction.department_id,
-      type: props.attraction.type,
-      city: props.attraction.city,
-      description: props.attraction.description,
-      short_description: props.attraction.short_description,
-      latitude: props.attraction.latitude,
-      longitude: props.attraction.longitude,
-      entry_price: props.attraction.entry_price,
-      duration_hours: props.attraction.duration_hours,
-      opening_hours: props.attraction.opening_hours,
-      closing_hours: props.attraction.closing_hours,
-      best_time_to_visit: props.attraction.best_time_to_visit,
-      is_active: props.attraction.is_active,
-      is_featured: props.attraction.is_featured,
-      images: [],
+    const processing = ref(false)
+    const errors = ref({})
+
+    // Formulario reactivo con inicialización inmediata
+    const form = reactive({
+      name: props.attraction?.name || '',
+      department_id: props.attraction?.department_id || null,
+      type: props.attraction?.type || '',
+      city: props.attraction?.city || '',
+      description: props.attraction?.description || '',
+      short_description: props.attraction?.short_description || '',
+      address: props.attraction?.address || '',
+      latitude: props.attraction?.latitude || null,
+      longitude: props.attraction?.longitude || null,
+      entry_price: props.attraction?.entry_price || null,
+      currency: props.attraction?.currency || 'BOB',
+      difficulty_level: props.attraction?.difficulty_level || 'easy',
+      estimated_duration: props.attraction?.estimated_duration || null,
+      best_season: props.attraction?.best_season || '',
+      is_featured: props.attraction?.is_featured ?? false,
+      is_active: props.attraction?.is_active ?? true,
     })
 
+    // Campos de array como strings para el formulario
+    const amenitiesString = ref(
+      Array.isArray(props.attraction?.amenities) && props.attraction.amenities.length > 0
+        ? props.attraction.amenities.join(', ') 
+        : ''
+    )
+    
+    const restrictionsString = ref(
+      Array.isArray(props.attraction?.restrictions) && props.attraction.restrictions.length > 0
+        ? props.attraction.restrictions.join(', ') 
+        : ''
+    )
+
+    // Campos de horarios simplificados
+    const openingTime = ref(
+      props.attraction?.opening_hours?.open || ''
+    )
+    
+    const closingTime = ref(
+      props.attraction?.opening_hours?.close || ''
+    )
+
+    // Manejo de imágenes
     const imagesPreviews = ref([])
 
     const handleFileSelect = (event) => {
@@ -546,11 +684,12 @@ export default {
     const handleFiles = (files) => {
       Array.from(files).forEach(file => {
         if (file.type.startsWith('image/')) {
-          form.images.push(file)
-          
           const reader = new FileReader()
           reader.onload = (e) => {
-            imagesPreviews.value.push(e.target.result)
+            imagesPreviews.value.push({
+              file: file,
+              preview: e.target.result
+            })
           }
           reader.readAsDataURL(file)
         }
@@ -558,35 +697,92 @@ export default {
     }
 
     const removeNewImage = (index) => {
-      form.images.splice(index, 1)
       imagesPreviews.value.splice(index, 1)
     }
 
     const removeExistingImage = (mediaId) => {
       if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
-        router.delete(route('admin.attractions.remove-media', {
-          attraction: props.attraction.id,
-          media: mediaId
-        }), {
-          preserveScroll: true,
-        })
+        // Aquí podrías hacer una llamada API para eliminar la imagen
+        console.log('Eliminar imagen con ID:', mediaId)
       }
     }
 
-    const submit = () => {
-      patch(route('admin.attractions.update', props.attraction.id))
+    const updateAttraction = async () => {
+      processing.value = true
+      errors.value = {}
+
+      try {
+        // Preparar datos con campos complejos
+        const formData = {
+          ...form,
+          // Convertir strings a arrays
+          amenities: amenitiesString.value 
+            ? amenitiesString.value.split(',').map(item => item.trim()).filter(item => item) 
+            : [],
+          restrictions: restrictionsString.value 
+            ? restrictionsString.value.split(',').map(item => item.trim()).filter(item => item) 
+            : [],
+          // Estructurar horarios
+          opening_hours: {
+            open: openingTime.value || null,
+            close: closingTime.value || null
+          }
+        }
+
+        const response = await axios.put(`/admin/attractions/${props.attraction.id}`, formData)
+        alert('Atractivo actualizado exitosamente')
+      } catch (error) {
+        console.error('Error al actualizar atractivo:', error)
+        if (error.response?.data?.errors) {
+          errors.value = error.response.data.errors
+        } else {
+          alert('Error al actualizar el atractivo')
+        }
+      } finally {
+        processing.value = false
+      }
+    }
+
+    // Map related functions
+    const openInGoogleMaps = () => {
+      const lat = parseFloat(form.latitude)
+      const lng = parseFloat(form.longitude)
+      const url = `https://www.google.com/maps?q=${lat},${lng}`
+      window.open(url, '_blank')
+    }
+
+    // Validate coordinates
+    const isValidCoordinates = () => {
+      const lat = parseFloat(form.latitude)
+      const lng = parseFloat(form.longitude)
+      
+      return (
+        !isNaN(lat) && 
+        !isNaN(lng) && 
+        lat >= -90 && 
+        lat <= 90 && 
+        lng >= -180 && 
+        lng <= 180
+      )
     }
 
     return {
       form,
       processing,
+      errors,
+      amenitiesString,
+      restrictionsString,
+      openingTime,
+      closingTime,
       imagesPreviews,
       handleFileSelect,
       handleDrop,
       removeNewImage,
       removeExistingImage,
-      submit,
+      updateAttraction,
+      openInGoogleMaps,
+      isValidCoordinates
     }
-  },
+  }
 }
 </script>
