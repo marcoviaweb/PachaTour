@@ -13,18 +13,18 @@
       <div class="bg-white rounded-lg shadow">
         <div class="p-6">
           <!-- Información del usuario autenticado (solo lectura) -->
-          <div class="mb-6 bg-green-50 rounded-lg p-4 border border-green-200">
-            <h4 class="text-sm font-medium text-green-800 mb-3">Información de contacto</h4>
+          <div class="mb-6 bg-pacha-50 rounded-lg p-4 border border-pacha-200">
+            <h4 class="text-sm font-medium text-pacha-800 mb-3">Información de contacto</h4>
             <div class="space-y-2">
               <div class="flex items-center">
-                <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-pacha-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
                 <span class="text-sm text-gray-700">Nombre:</span>
                 <span class="text-sm font-medium text-gray-900 ml-2">{{ form.name }} {{ form.last_name }}</span>
               </div>
               <div class="flex items-center">
-                <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-pacha-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v10a2 2 0 002 2z"></path>
                 </svg>
                 <span class="text-sm text-gray-700">Email:</span>
@@ -45,7 +45,7 @@
                   id="phone"
                   v-model="form.phone"
                   type="tel"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pacha-500 focus:border-pacha-500"
                   :class="{ 'border-red-500': errors.phone }"
                 />
                 <p v-if="errors.phone" class="mt-1 text-sm text-red-600">{{ errors.phone }}</p>
@@ -60,7 +60,7 @@
                   id="birth_date"
                   v-model="form.birth_date"
                   type="date"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pacha-500 focus:border-pacha-500"
                   :class="{ 'border-red-500': errors.birth_date }"
                 />
                 <p v-if="errors.birth_date" class="mt-1 text-sm text-red-600">{{ errors.birth_date }}</p>
@@ -74,7 +74,7 @@
                 <select
                   id="gender"
                   v-model="form.gender"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pacha-500 focus:border-pacha-500"
                   :class="{ 'border-red-500': errors.gender }"
                 >
                   <option value="">Seleccionar...</option>
@@ -95,7 +95,7 @@
                   id="nationality"
                   v-model="form.nationality"
                   type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pacha-500 focus:border-pacha-500"
                   :class="{ 'border-red-500': errors.nationality }"
                 />
                 <p v-if="errors.nationality" class="mt-1 text-sm text-red-600">{{ errors.nationality }}</p>
@@ -110,7 +110,7 @@
                   id="country"
                   v-model="form.country"
                   type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pacha-500 focus:border-pacha-500"
                   :class="{ 'border-red-500': errors.country }"
                 />
                 <p v-if="errors.country" class="mt-1 text-sm text-red-600">{{ errors.country }}</p>
@@ -125,7 +125,7 @@
                   id="city"
                   v-model="form.city"
                   type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pacha-500 focus:border-pacha-500"
                   :class="{ 'border-red-500': errors.city }"
                 />
                 <p v-if="errors.city" class="mt-1 text-sm text-red-600">{{ errors.city }}</p>
@@ -139,7 +139,7 @@
                 <select
                   id="preferred_language"
                   v-model="form.preferred_language"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pacha-500 focus:border-pacha-500"
                   :class="{ 'border-red-500': errors.preferred_language }"
                 >
                   <option value="">Seleccionar...</option>
@@ -160,7 +160,7 @@
                 v-model="form.bio"
                 rows="4"
                 maxlength="500"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pacha-500 focus:border-pacha-500"
                 :class="{ 'border-red-500': errors.bio }"
                 placeholder="Cuéntanos un poco sobre ti..."
               ></textarea>
@@ -177,7 +177,7 @@
                     id="newsletter_subscription"
                     v-model="form.newsletter_subscription"
                     type="checkbox"
-                    class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                    class="h-4 w-4 text-pacha-600 focus:ring-pacha-500 border-gray-300 rounded"
                   />
                   <label for="newsletter_subscription" class="ml-2 block text-sm text-gray-900">
                     Recibir boletín informativo con ofertas y novedades
@@ -189,7 +189,7 @@
                     id="marketing_emails"
                     v-model="form.marketing_emails"
                     type="checkbox"
-                    class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                    class="h-4 w-4 text-pacha-600 focus:ring-pacha-500 border-gray-300 rounded"
                   />
                   <label for="marketing_emails" class="ml-2 block text-sm text-gray-900">
                     Recibir emails promocionales y de marketing
@@ -203,7 +203,7 @@
               <button
                 type="submit"
                 :disabled="processing"
-                class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                class="bg-pacha-600 text-white px-6 py-2 rounded-lg hover:bg-pacha-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span v-if="processing">Guardando...</span>
                 <span v-else>Guardar Cambios</span>

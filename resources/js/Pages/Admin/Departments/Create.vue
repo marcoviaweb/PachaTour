@@ -261,7 +261,7 @@
                 id="is_active"
                 v-model="form.is_active"
                 type="checkbox"
-                class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                class="h-4 w-4 text-pacha-600 focus:ring-pacha-500 border-gray-300 rounded"
               />
               <label for="is_active" class="ml-2 block text-sm text-gray-900">
                 Departamento activo (visible en el sitio público)
@@ -297,7 +297,7 @@
           <button
             type="submit"
             :disabled="processing"
-            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pacha-600 hover:bg-pacha-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pacha-500 disabled:opacity-50"
           >
             <template v-if="processing">
               <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

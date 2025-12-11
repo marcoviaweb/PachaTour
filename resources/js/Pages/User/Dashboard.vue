@@ -13,7 +13,7 @@
           <div class="flex items-center space-x-4">
             <Link 
               href="/atractivos"
-              class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+              class="bg-pacha-600 text-white px-4 py-2 rounded-lg hover:bg-pacha-700 transition-colors"
             >
               Explorar Destinos
             </Link>
@@ -39,8 +39,8 @@
 
         <div class="bg-white rounded-lg shadow p-6">
           <div class="flex items-center">
-            <div class="p-2 bg-green-100 rounded-lg">
-              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="p-2 bg-pacha-100 rounded-lg">
+              <svg class="w-6 h-6 text-pacha-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
@@ -53,8 +53,8 @@
 
         <div class="bg-white rounded-lg shadow p-6">
           <div class="flex items-center">
-            <div class="p-2 bg-yellow-100 rounded-lg">
-              <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="p-2 bg-pacha-100 rounded-lg">
+              <svg class="w-6 h-6 text-pacha-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
               </svg>
             </div>
@@ -67,8 +67,8 @@
 
         <div class="bg-white rounded-lg shadow p-6">
           <div class="flex items-center">
-            <div class="p-2 bg-purple-100 rounded-lg">
-              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="p-2 bg-pacha-100 rounded-lg">
+              <svg class="w-6 h-6 text-pacha-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
@@ -91,7 +91,7 @@
             :class="[
               'py-2 px-1 border-b-2 font-medium text-sm transition-colors',
               activeTab === tab.id
-                ? 'border-green-500 text-green-600'
+                ? 'border-pacha-500 text-pacha-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             ]"
           >
@@ -118,13 +118,13 @@
           <div class="space-y-4">
             <Link 
               href="/atractivos"
-              class="inline-block bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
+              class="inline-block bg-pacha-600 text-white px-8 py-3 rounded-lg hover:bg-pacha-700 transition-colors font-semibold"
             >
               Explorar Destinos
             </Link>
             <div class="text-sm text-gray-500">
               <p>¿No sabes por dónde empezar?</p>
-              <Link href="/departamentos" class="text-green-600 hover:text-green-700 font-medium">
+              <Link href="/departamentos" class="text-pacha-600 hover:text-pacha-700 font-medium">
                 Explora por departamentos →
               </Link>
             </div>

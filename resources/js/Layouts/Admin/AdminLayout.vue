@@ -8,7 +8,7 @@
           <div class="flex">
             <div class="flex-shrink-0 flex items-center">
               <Link href="/admin/dashboard" class="text-xl font-bold text-gray-900">
-                <span class="text-green-600">Pacha</span>Tour Admin
+                <span class="text-pacha-600">Pacha</span>Tour Admin
               </Link>
             </div>
             

@@ -5,7 +5,7 @@
     <!-- Loading State -->
     <div v-if="loading" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-pacha-600 mx-auto mb-4"></div>
         <p class="text-gray-600">Cargando departamento...</p>
       </div>
     </div>
@@ -21,7 +21,7 @@
           <p class="text-gray-600 mb-4">{{ error }}</p>
           <Link 
             href="/"
-            class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+            class="bg-pacha-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pacha-700 transition-colors"
           >
             Volver al inicio
           </Link>
@@ -32,7 +32,7 @@
     <!-- Department Content -->
     <div v-else-if="department">
       <!-- Hero Section -->
-      <section class="relative bg-gradient-to-r from-green-600 to-blue-600 text-white">
+      <section class="relative bg-gradient-to-r from-pacha-600 to-pacha-800 text-white">
         <div class="absolute inset-0 bg-black opacity-40"></div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div class="text-center">
@@ -71,11 +71,11 @@
               <!-- Department Stats -->
               <div class="mt-8 grid grid-cols-2 gap-6">
                 <div class="text-center p-4 bg-gray-50 rounded-lg">
-                  <div class="text-2xl font-bold text-green-600">{{ formatNumber(department.population) }}</div>
+                  <div class="text-2xl font-bold text-pacha-600">{{ formatNumber(department.population) }}</div>
                   <div class="text-sm text-gray-600">Habitantes</div>
                 </div>
                 <div class="text-center p-4 bg-gray-50 rounded-lg">
-                  <div class="text-2xl font-bold text-green-600">{{ formatNumber(department.area_km2) }}</div>
+                  <div class="text-2xl font-bold text-pacha-600">{{ formatNumber(department.area_km2) }}</div>
                   <div class="text-sm text-gray-600">km²</div>
                 </div>
               </div>
@@ -106,7 +106,7 @@
 
           <!-- Loading attractions -->
           <div v-if="loadingAttractions" class="flex justify-center py-12">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-pacha-600"></div>
           </div>
 
           <!-- Attractions Grid -->

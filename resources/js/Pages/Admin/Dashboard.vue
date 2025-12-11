@@ -37,7 +37,7 @@
           </div>
           <div class="bg-gray-50 px-5 py-3">
             <div class="text-sm">
-              <span class="text-green-600 font-medium">+{{ metrics.new_users_this_month }}</span>
+              <span class="text-pacha-600 font-medium">+{{ metrics.new_users_this_month }}</span>
               <span class="text-gray-600"> este mes</span>
             </div>
           </div>
@@ -48,7 +48,7 @@
           <div class="p-5">
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <EyeIcon class="h-6 w-6 text-green-400" />
+                <EyeIcon class="h-6 w-6 text-pacha-400" />
               </div>
               <div class="ml-5 w-0 flex-1">
                 <dl>
@@ -64,7 +64,7 @@
           </div>
           <div class="bg-gray-50 px-5 py-3">
             <div class="text-sm">
-              <Link href="/admin/attractions" class="text-green-600 font-medium hover:text-green-900">
+              <Link href="/admin/attractions" class="text-pacha-600 font-medium hover:text-pacha-900">
                 Ver todos los atractivos
               </Link>
             </div>
@@ -103,7 +103,7 @@
           <div class="p-5">
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <CheckCircleIcon class="h-6 w-6 text-green-400" />
+                <CheckCircleIcon class="h-6 w-6 text-pacha-400" />
               </div>
               <div class="ml-5 w-0 flex-1">
                 <dl>
@@ -119,7 +119,7 @@
           </div>
           <div class="bg-gray-50 px-5 py-3">
             <div class="text-sm">
-              <span class="text-yellow-600 font-medium">{{ metrics.pending_bookings }}</span>
+              <span class="text-pacha-600 font-medium">{{ metrics.pending_bookings }}</span>
               <span class="text-gray-600"> pendientes</span>
             </div>
           </div>
@@ -193,7 +193,7 @@
                       :class="[
                         'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
                         booking.status === 'confirmed'
-                          ? 'bg-green-100 text-green-800'
+                          ? 'bg-pacha-100 text-pacha-800'
                           : booking.status === 'pending'
                           ? 'bg-yellow-100 text-yellow-800'
                           : 'bg-red-100 text-red-800'
@@ -237,7 +237,7 @@
                         <span v-for="n in 5" :key="n" class="h-3 w-3">
                           <StarIcon
                             :class="[
-                              n <= (review.rating || 0) ? 'text-yellow-400' : 'text-gray-300',
+                              n <= (review.rating || 0) ? 'text-pacha-400' : 'text-gray-300',
                               'h-3 w-3'
                             ]"
                             fill="currentColor"
@@ -272,7 +272,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               href="/admin/departments/create"
-              class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg text-center transition duration-150 flex items-center justify-center space-x-2"
+              class="bg-pacha-600 hover:bg-pacha-700 text-white px-4 py-3 rounded-lg text-center transition duration-150 flex items-center justify-center space-x-2"
             >
               <PlusIcon class="h-5 w-5" />
               <span>Nuevo Departamento</span>

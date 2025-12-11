@@ -12,7 +12,7 @@
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600">
           O
-          <Link href="/login" class="font-medium text-green-600 hover:text-green-500">
+          <Link href="/login" class="font-medium text-pacha-600 hover:text-pacha-500">
             inicia sesión si ya tienes cuenta
           </Link>
         </p>
@@ -100,13 +100,13 @@
             name="terms"
             type="checkbox"
             required
-            class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+            class="h-4 w-4 text-pacha-600 focus:ring-pacha-500 border-gray-300 rounded"
           />
           <label for="terms" class="ml-2 block text-sm text-gray-900">
             Acepto los 
-            <a href="#" class="text-green-600 hover:text-green-500">términos y condiciones</a>
+            <a href="#" class="text-pacha-600 hover:text-pacha-500">términos y condiciones</a>
             y la 
-            <a href="#" class="text-green-600 hover:text-green-500">política de privacidad</a>
+            <a href="#" class="text-pacha-600 hover:text-pacha-500">política de privacidad</a>
           </label>
         </div>
 
@@ -114,7 +114,7 @@
           <button
             type="submit"
             :disabled="form.processing"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-pacha-600 hover:bg-pacha-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pacha-500 disabled:opacity-50"
           >
             <span v-if="form.processing">Creando cuenta...</span>
             <span v-else>Crear cuenta</span>

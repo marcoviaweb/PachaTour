@@ -233,7 +233,7 @@
                 <button
                   type="button"
                   @click="addLanguage"
-                  class="text-green-600 hover:text-green-800 text-sm font-medium"
+                  class="text-pacha-600 hover:text-pacha-800 text-sm font-medium"
                 >
                   + Agregar idioma
                 </button>
@@ -254,7 +254,7 @@
                 id="is_active"
                 v-model="form.is_active"
                 type="checkbox"
-                class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                class="h-4 w-4 text-pacha-600 focus:ring-pacha-500 border-gray-300 rounded"
               />
               <label for="is_active" class="ml-2 block text-sm text-gray-900">
                 Departamento activo (visible en el sitio público)
