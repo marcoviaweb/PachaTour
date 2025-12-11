@@ -6,98 +6,76 @@ Plataforma digital integral para promocionar y facilitar la experiencia turísti
 
 - PHP >= 8.1
 - Composer
+# Pacha Tour — Pasos mínimos para instalar (rama SQA)
+
+A continuación están los pasos concretos y mínimos para dejar la aplicación funcionando desde la rama `SQA`.
+
+1. Instalar Requisitos del Sistema
+
+- PHP >= 8.1
 - Node.js >= 16
 - PostgreSQL >= 13
+- Composer
 - Git
 
-## 🚀 Instalación Rápida
+2. Clonar el Repositorio y cambiar a la rama `SQA`
 
-### Opción 1: Instalación Automática (Recomendada)
-
-**Windows:**
-```bash
-# Ejecutar script de instalación
-install.bat
+```powershell
+git clone https://github.com/marcoviaweb/PachaTour.git
+cd PachaTour
+git checkout SQA
 ```
 
-**Linux/macOS:**
-```bash
-# Dar permisos y ejecutar
-chmod +x install.sh
-./install.sh
+3. Instalar Dependencias PHP
+
+```powershell
+composer install
 ```
 
-### Opción 2: Instalación con Docker
+4. Instalar Dependencias JavaScript
 
-```bash
-# Clonar repositorio
-git clone [URL_REPOSITORIO] pacha-tour
-cd pacha-tour
-
-# Iniciar con Docker
-docker-compose up -d
-
-# Ejecutar migraciones
-docker-compose exec app php artisan migrate
+```powershell
+npm install
 ```
 
-### Opción 3: Instalación Manual
+5. Restaurar la Base de Datos
 
-Ver guía completa en [INSTALACION.md](INSTALACION.md)
+Restaurar el backup proporcionado en PostgreSQL para recrear la base de datos del proyecto.
 
-## ⚡ Inicio Rápido
+6. Configurar Variables de Entorno
 
-```bash
-# Después de la instalación
+```powershell
+# Copiar archivo de configuración
+cp .env.example .env
+
+# Editar `.env` y configurar la conexión a PostgreSQL
+# Ejemplo de valores a editar:
+# DB_CONNECTION=pgsql
+# DB_HOST=127.0.0.1
+# DB_PORT=5432
+# DB_DATABASE=pacha_tour_db
+# DB_USERNAME=postgres
+# DB_PASSWORD=tu_password
+
+# Generar clave de aplicación
+php artisan key:generate
+```
+
+7. Compilar Assets (CSS/JS)
+
+```powershell
+npm run dev
+```
+
+8. Iniciar Servidor en otra terminal
+
+```powershell
 php artisan serve
-
-# Visitar: http://localhost:8000
 ```
 
-## Desarrollo
+La aplicación quedará accesible en `http://localhost:8000`.
 
-### Servidor de desarrollo
-```bash
-php artisan serve
-```
-
-### Compilación de assets
-```bash
-npm run dev          # Desarrollo
-npm run build        # Producción
-```
-
-### Testing
-```bash
-php artisan test     # Tests Laravel
-npm run test         # Tests Vue.js
-```
-
-## Estructura del Proyecto
-
-El proyecto está organizado por features/funcionalidades para facilitar el mantenimiento y escalabilidad:
-
-```
-app/
-├── Features/
-│   ├── Departments/     # Gestión de departamentos bolivianos
-│   ├── Attractions/     # Atractivos turísticos y multimedia
-│   ├── Tours/          # Recorridos, horarios y reservas
-│   ├── Users/          # Autenticación y gestión de usuarios
-│   ├── Payments/       # Sistema de pagos y comisiones
-│   ├── Reviews/        # Valoraciones y comentarios
-│   ├── Admin/          # Backoffice y herramientas administrativas
-│   └── Localization/   # Soporte multilingüe
-├── Models/             # Modelos Eloquent compartidos
-└── Http/Controllers/   # Controladores base
-```
-
-Cada feature contiene:
-- **Controllers/**: Controladores específicos de la funcionalidad
-- **Models/**: Modelos Eloquent relacionados
-- **Services/**: Lógica de negocio y servicios
-
-Ver [FEATURE_STRUCTURE.md](FEATURE_STRUCTURE.md) para más detalles.
+Si quieres que también haga el commit de este cambio o lo suba a una rama, dime y lo hago.
 
 ## Stack Tecnológico
 
